@@ -9,15 +9,17 @@ class NodeLabel{
 }
 
 class NodeFigure{
-    constructor(id, x, y, color, label){
+    constructor(id, x, y, width, height, color, label){
         this.id = id;
         this.x = (x == null) ? randomFromTo(0, canvas.width) : x;
         this.y = (y == null) ? randomFromTo(0, canvas.height) : y;
+        this.width = (width == null) ? randomFromTo(20, 100) : width;
+        this.height = (height == null) ? randomFromTo(0, 100) : height;
         this.color = (color == null) ? "black" : color;
         this.label = (label == null) ? new NodeLabel() : label;
         this.isSelected = false;
-        this.centerX = 0;
-        this.centerY = 0;
+        this.centerX = this.x + this.width / 2;
+        this.centerY = this.y + this.height / 2;
     }
 
     draw(){
@@ -30,6 +32,8 @@ class NodeFigure{
     drag (mousePosition){
         this.centerX = mousePosition.x;
         this.centerY = mousePosition.y;
+        this.x = mousePosition.x - this.width / 2;
+        this.y = mousePosition.y -this.height / 2;
     }
 
     addlabel(){
@@ -41,8 +45,7 @@ class NodeFigure{
     }
 
     getLabelPosition(){
-        var x = 0;
-        var y = 0;
+        var x = 0; var y = 0;        
         switch (this.label.position){
             case "TopLeft":
                 x = this.centerX - this.width / 2 - this.label.lenght - 5;
@@ -75,49 +78,15 @@ class NodeFigure{
             case "BottomRight":
                 x = this.centerX + this.width / 2 + 5;
                 y = this.centerY + this.height / 2 + 15;
-                break;    
-            
+                break;                
         }
-        return (x, y)       
-    }
-}
-
-class Rectangle extends NodeFigure{
-    constructor (id, x, y, width, height, color, label){
-        super(id, x, y, color, label);
-        this.width = (width == null) ? randomFromTo(20, 100) : width;
-        this.height = (height == null) ? randomFromTo(20, 100) : height;
-        this.centerX = this.x + this.width / 2;
-        this.centerY = this.y + this.height / 2;
-
-    }
-
-    draw(){
-        context.beginPath()
-        context.rect(this.x, this.y, this.width, this.height);
-        context.fillStyle = this.color;
-        context.fill();
-        super.draw();
-        super.addLabel();
-    }
-
-    drag(mousePosition){
-        super.drag(mousePosition);
-        this.x = mousePosition.x - this.width / 2;
-        this.y = mousePosition.y - this.height / 2;
-    }
-
-    isSelect(mousePosition){
-        if ((this.x <= mousePosition.x && mousePosition.x <= (this.x + this.width))
-        && (this.y <= mousePosition.y && mousePosition.y <= (this.y + this.height)))
-            return true;
-        return false
+        return {x, y}       
     }
 }
 
 class Circle extends NodeFigure{
     constructor (id, x, y, width, height, color, label){
-        super(id, x, y, color, label);
+        super(id, x, y, width, height, color, label);
         this.radius = (width == null || height == null) ? randomFromTo(5, 50) : Math.max(width , height) / 2;
         this.width = this.radius * 2;
         this.height = this.radius * 2;
@@ -133,13 +102,11 @@ class Circle extends NodeFigure{
         context.fillStyle = this.color;
         context.fill();
         super.draw();
-        super.addLabel();
+        super.addlabel();
     }
 
     drag(mousePosition){
         super.drag(mousePosition);
-        this.x = this.centerX - this.radius;
-        this.y = this.centerY - this.radius;
     }
 
     isSelect(mousePosition){
@@ -152,114 +119,223 @@ class Circle extends NodeFigure{
 
 class Triangle extends NodeFigure{
     constructor (id, x, y, width, height, color, label){
-        super(id, x, y, color, label);
-        this.width = (width == null) ? randomFromTo(20, 100) : width;
-        this.height = (height == null) ? randomFromTo(20, 100) : height;
-        this.centerX = this.x + this.width / 2;
-        this.centerY = this.y + this.height / 2;
+        super(id, x, y, width, height, color, label);
     }
 
     draw(){
         context.beginPath();
-        context.moveTo(this.x + this.width / 2, this.y);
+        context.moveTo(this.centerX, this.y);
         context.lineTo(this.x + this.width, this.y + this.height);
         context.lineTo(this.x, this.y + this.height);
-        context.lineTo(this.x + this.width / 2, this.y);
+        context.lineTo(this.centerX, this.y);
         context.fillStyle = this.color;
         context.fill();
         super.draw();
-        super.addLabel();
-
+        super.addlabel();
     }
 
     drag(mousePosition){
         super.drag(mousePosition);
-        this.x = mousePosition.x - this.width / 2;
-        this.y = mousePosition.y - this.height / 2;
     }
 
     isSelect(mousePosition){
-        var x1 = this.x + this.width / 2;
-        var y1 = this.y;
-        var x2 = this.x + this.width;
-        var y2 = this.y + this.height;
-        var x3 = this.x;
-        var y3 = this.y + this.height;
+       return inTriangle(this.centerX, this.y, this.x + this.width, this.y + this.height, this.x, this.y + this.height, mousePosition)
+    }
+}
 
-        var a = (x1 - mousePosition.x) * (y2 - y1) - (x2 - x1) * (y1 - mousePosition.y);
-        var b = (x3 - mousePosition.x) * (y3 - y2) - (x3 - x2) * (y2 - mousePosition.y);
-        var c = (x3 - mousePosition.x) * (y1 - y3) - (x1 - x3) * (y3 - mousePosition.y);
+class Rectangle extends NodeFigure{
+    constructor (id, x, y, width, height, color, label){
+        super(id, x, y, width, height, color, label);
+    }
 
-        if ((a >= 0 && b >= 0 && c >= 0) || (a <= 0 && b <= 0 && c <= 0))
-            return true;
-        return false
+    draw(){
+        context.beginPath()
+        context.rect(this.x, this.y, this.width, this.height);
+        context.fillStyle = this.color;
+        context.fill();
+        super.draw();
+        super.addlabel();
+    }
+
+    drag(mousePosition){
+        super.drag(mousePosition);
+    }
+
+    isSelect(mousePosition){
+        return inRectangle(this.x, this.y, this.x + this.width, this.y + this.height, mousePosition)
     }
 }
 
 class Rhomb extends NodeFigure{
     constructor (id, x, y, width, height, color, label){
-        super(id, x, y, color, label);
-        this.width = (width == null) ? randomFromTo(20, 100) : width;
-        this.height = (height == null) ? randomFromTo(20, 100) : height;
+        super(id, x, y, width, height, color, label);
+    }
+
+    draw(){
+        context.beginPath();
+        context.moveTo(this.centerX, this.y);
+        context.lineTo(this.x + this.width, this.centerY);
+        context.lineTo(this.centerX, this.y + this.height);
+        context.lineTo(this.x, this.centerY);
+        context.lineTo(this.centerX, this.y);
+        context.fillStyle = this.color;
+        context.fill();
+        super.draw();
+        super.addlabel();
+    }
+
+    drag(mousePosition){
+        super.drag(mousePosition);
+    }
+
+    isSelect(mousePosition){
+        return (inTriangle(this.x, this.centerY, this.centerX, this.y, this.x + this.width, this.centerY, mousePosition)
+            || inTriangle(this.x, this.centerY, this.centerX, this.y + this.height, this.x + this.width, this.centerY, mousePosition))
+    }
+}
+
+class Pentagon extends NodeFigure{
+    constructor (id, x, y, width, height, color, label){
+        super(id, x, y, width, height, color, label);
+    }
+
+    draw(){
+        context.beginPath();
+        context.moveTo(this.centerX, this.y);
+        context.lineTo(this.x + this.width, this.centerY);
+        context.lineTo(this.x + this.width, this.y + this.height);
+        context.lineTo(this.x, this.y + this.height);
+        context.lineTo(this.x, this.centerY);
+        context.lineTo(this.centerX, this.y);
+        context.fillStyle = this.color;
+        context.fill();
+        super.draw();
+        super.addlabel();
+    }
+
+    drag(mousePosition){
+        super.drag(mousePosition);
+    }
+
+    isSelect(mousePosition){
+        return (inTriangle(this.centerX, this.y, this.x + this.width, this.centerY, this.x, this.centerY, mousePosition)
+            || inRectangle(this.x, this.centerY, this.x + this.width, this.y + this.height, mousePosition))
+    }
+}
+
+class Hexagon extends NodeFigure{
+    constructor (id, x, y, width, height, color, label){
+        super(id, x, y, width, height, color, label);
+    }
+
+    draw(){
+        context.beginPath();
+        context.moveTo(this.x + 1.5 * this.width / 6, this.y);
+        context.lineTo(this.x + 4.5 * this.width / 6, this.y);
+        context.lineTo(this.x + this.width, this.centerY);
+        context.lineTo(this.x + 4.5 * this.width / 6, this.y + this.height);
+        context.lineTo(this.x + 1.5 * this.width / 6, this.y + this.height);
+        context.lineTo(this.x, this.centerY);
+        context.lineTo(this.x + 1.5 * this.width / 6, this.y);
+        context.fillStyle = this.color;
+        context.fill();
+        super.draw();
+        super.addlabel();
+    }
+
+    drag(mousePosition){
+        super.drag(mousePosition);
+    }
+
+    isSelect(mousePosition){
+        return (inTriangle(this.x + 1.5 * this.width / 6, this.y, this.x + 1.5 * this.width / 6, this.y + this.height, this.x, this.centerY, mousePosition)
+            || inTriangle(this.x + 4.5 * this.width / 6, this.y, this.x + 4.5 * this.width / 6, this.y + this.height, this.x + this.width, this.centerY, mousePosition)
+            || inRectangle(this.x + 1.5 * this.width / 6, this.y, this.x + 4.5 * this.width / 6, this.y + this.height, mousePosition))
+    }
+}
+
+class Plus extends NodeFigure{
+    constructor (id, x, y, width, height, color, label){
+        super(id, x, y, width, height, color, label);
+        this.width = Math.max(width, height);
+        this.height = Math.max(width, height);
         this.centerX = this.x + this.width / 2;
         this.centerY = this.y + this.height / 2;
     }
 
     draw(){
         context.beginPath();
-        context.moveTo(this.x + this.width / 2, this.y);
-        context.lineTo(this.x + this.width, this.y + this.height / 2);
-        context.lineTo(this.x + this.width / 2, this.y + this.height);
-        context.lineTo(this.x, this.y + this.height / 2);
-        context.lineTo(this.x + this.width / 2, this.y);
+        context.moveTo(this.x + this.width / 3, this.y);
+        context.lineTo(this.x + 2 * this.width / 3, this.y);
+        context.lineTo(this.x + 2 * this.width / 3, this.y + this.height / 3);
+        context.lineTo(this.x + this.width, this.y + this.height / 3);
+        context.lineTo(this.x + this.width, this.y + 2 * this.height / 3);
+        context.lineTo(this.x + 2 * this.width / 3, this.y + 2 * this.height / 3);
+        context.lineTo(this.x + 2 * this.width / 3, this.y + this.height);
+        context.lineTo(this.x + this.width / 3, this.y + this.height);
+        context.lineTo(this.x + this.width / 3, this.y + 2 * this.height / 3);
+        context.lineTo(this.x, this.y + 2 * this.height / 3);
+        context.lineTo(this.x, this.y + this.height / 3);
+        context.lineTo(this.x + this.width / 3, this.y + this.height / 3);
+        context.lineTo(this.x + this.width / 3, this.y);
         context.fillStyle = this.color;
         context.fill();
         super.draw();
-        super.addLabel();
-
+        super.addlabel();
     }
 
     drag(mousePosition){
         super.drag(mousePosition);
-        this.x = mousePosition.x - this.width / 2;
-        this.y = mousePosition.y - this.height / 2;
     }
 
     isSelect(mousePosition){
-        if ((this.x <= mousePosition.x && mousePosition.x <= (this.x + this.width))
-        && (this.y <= mousePosition.y && mousePosition.y <= (this.y + this.height)))
-            return true;
-        return false
+        return (inRectangle(this.x + this.width / 3, this.y, this.x + 2 * this.width / 3, this.y + this.height, mousePosition)
+            || inRectangle(this.x, this.y + this.height / 3, this.x + this.width, this.y + 2 * this.height / 3, mousePosition))
     }
+}
+
+class Vee extends NodeFigure{
+    constructor (id, x, y, width, height, color, label){
+        super(id, x, y, width, height, color, label);
+    }
+
+    draw(){
+        context.beginPath();
+        context.moveTo(this.centerX, this.centerY);
+        context.lineTo(this.x + this.width, this.y);
+        context.lineTo(this.centerX, this.y + this.height);
+        context.lineTo(this.x, this.y);
+        context.lineTo(this.centerX, this.centerY);
+        context.fillStyle = this.color;
+        context.fill();
+        super.draw();
+        super.addlabel();
+    }
+
+    drag(mousePosition){
+        super.drag(mousePosition);
+    }
+
+    isSelect(mousePosition){
+        return (inTriangle(this.x, this.y, this.centerX, this.centerY, this.centerX, this.y + this.height, mousePosition)
+            || inTriangle(this.x + this.width, this.y, this.centerX, this.centerY, this.centerX, this.y + this.height, mousePosition))
+    }
+}
+
+const shapeMapping = {
+    "Circle" : Circle, "Triangle" : Triangle, "Rectangle" : Rectangle, "Rhomb" : Rhomb, "Pentagon" : Pentagon, "Hexagon" : Hexagon, "Plus" : Plus, "Vee" : Vee
 }
 
 class Figures{
     constructor(){
         this.figures = []
     }
-
-    newNode(shape, id, x, y, wight, height, color, label){
-        if (this.figures.find(f => f.if == id)) return;
-        var figure;
-        switch (shape){
-            case "Rectangle":
-                figure = new Rectangle(id, x, y, wight, height, color, label)
-                break;
-            case "Circle":
-                figure = new Circle(id, x, y, wight, height, color, label)
-                break;
-            case "Triangle":
-                figure = new Triangle(id, x, y, wight, height, color, label)
-                break;
-            case "Rhomb":
-                figure = new Rhomb(id, x, y, wight, height, color, label)
-                break;
-        }
-        this.figures.push(figure);
+    newNode(shape, id, x, y, width, height, color, label){
+        if (this.figures.find(f => f.id == id)) return;
+        var figure = new shapeMapping[shape](id, x, y, width, height, color, label);
+        this.figures.push(figure)
         return figure;
-
     }
-
     newEdge(id, from, to, width, color, shape, arrow, label){
         if (this.figures.find(f => f.id == id)) return;
         var direction = 1;
@@ -268,31 +344,27 @@ class Figures{
         var figure = new Edge(id, this.getFiguresById(from), this.getFiguresById(to), width, color, shape, arrow, label, direction);
         this.figures.push(figure);
         return figure;
-
     }
-
     get allFigures(){
         return this.figures;
     }
-
     get numberOfFigures(){
         return this.figures.lenght;
     }
-
     getFiguresById(id){
         return this.figures.find(f => f.id == id);
     }
-
     draw(){
+        //
         this.figures.filter(figure => figure.constructor.name == "Edge").forEach(fig => fig.draw());
         this.figures.filter(figure => figure.constructor.name != "Edge").forEach(fig => fig.draw());
-
+        //
+        //
     }
-
-    isSelectedFugure(mousePos){
+    isSelectedFigure(mousePos){
         var isSelectFigure = false;
         var figure;
-        for (var i = this.figures.lenght-1; i >= 0; i--){
+        for (var i = this.figures.length-1; i >= 0; i--){
             figure = this.figures[i];
             if (figure.constructor.name != "Edge" && figure.isSelect(mousePos)) isSelectFigure = true;
             if (isSelectFigure) break;
@@ -311,12 +383,11 @@ class Edge{
         this.to = to;
         this.width = (width == null) ? randomFromTo(3, 10) : width;
         this.color = (color == null) ? "grey" : color;
-        this.shape = (shape == null) ? "straight" : color;
-        this.arrow = (arrow == null) ? "none" : color;
+        this.shape = (shape == null) ? "straight" : shape;
+        this.arrow = (arrow == null) ? "none" : arrow;
         this.label = (label == null) ? null : label;
         this.direction = (direction == null) ? 1 : direction;
         this.isSelected = false;
-    
     }
 
     draw(){
@@ -327,7 +398,7 @@ class Edge{
                 context.lineTo(this.to.centerX, this.to.centerY);
                 context.lineWidth = this.width;
                 context.strokeStyle = this.color;
-                context.stroke;
+                context.stroke();
                 break;
             case "curve":
                 context.beginPath();
@@ -337,22 +408,38 @@ class Edge{
                 context.quadraticCurveTo(controlX, controlY, this.to.centerX, this.to.centerY);
                 context.lineWidth = this.width;
                 context.strokeStyle = this.color;
-                context.stroke;
+                context.stroke();
                 break;
             case "loop":
                 context.beginPath();
                 var radius;
                 if (this.from.constructor.name == "Circle") radius = Math.min(this.from.width / 2, this.from.height / 2, this.from.radius / 1.5);
                 else radius = Math.min(this.from.width / 2, this.from.height / 2);
-                context.arc(this.from.x, this.from.y, radius, 0, 2 * Math.PI)
-                context.lineWidth = this.width;
+                context.arc(this.from.x, this.from.y, radius, 0, 2 * Math.PI);
                 context.strokeStyle = this.color;
-                context.stroke;
-                break;
+                context.stroke();
         }
     }
 }
 
 function randomFromTo(from, to){
     return Math.floor(Math.random() * (to - from + 1) + from);
+}
+
+function inTriangle(x1, y1, x2, y2, x3, y3, mousePosition){
+    //console.log(mousePosition)
+    var a = (x1 - mousePosition.x) * (y2 - y1) - (x2 - x1) * (y1 - mousePosition.y);
+    var b = (x2 - mousePosition.x) * (y3 - y2) - (x3 - x2) * (y2 - mousePosition.y);
+    var c = (x3 - mousePosition.x) * (y1 - y3) - (x1 - x3) * (y3 - mousePosition.y);
+
+    if ((a >= 0 && b >= 0 && c >= 0) || (a <= 0 && b <= 0 && c <= 0))
+        return true;
+    return false;
+}
+
+function inRectangle(xLT, yLT, xRB, yRB, mousePosition){
+    if ((xLT <= mousePosition.x && mousePosition.x <= xRB)
+    && (yLT <= mousePosition.y && mousePosition.y <= yRB))
+        return true;
+    return false;
 }

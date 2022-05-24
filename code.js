@@ -1,5 +1,5 @@
-canvas = document.querySelector('#myCanvas');
-context = canvas.getContext('2d');
+canvas = document.querySelector("#myCanvas");
+context = canvas.getContext("2d");
 elements = new Figures();
 
 var previousSelectedFigure;
@@ -11,14 +11,14 @@ canvas.onmousemove = dragFigure;
 
 createFigures(10, 5);
 
-function randomFromTo(from, to){
+function randomFromTo (from, to){
     return Math.floor(Math.random() * (to - from + 1) + from);
 }
 
-function addRandomNodes(){
+function addRandomNodes (){
     //example: id, x, y, width, height, color, shape, label
     var colors = ["green", "blue", "red", "yellow", "magenta", "orange", "brown", "purple", "pink", "cyan"];
-    var shapes = ["Rectangle", "Circle", "Triangle", "Rhomb"];
+    var shapes = ["Circle", "Triangle", "Rectangle", "Rhomb", "Pentagon", "Hexagon", "Plus", "Vee"];
     var positions = ["TopLeft", "TopCenter", "TopRight", "CenterLeft", "CenterRight", "BottomLeft", "BottomCenter", "BottomRight"];
     var fontFamilies = ["Times", "Times New Roman", "Georgia", "Verdana", "Arial", "cursive", "fantasy"];
     var pos = positions[randomFromTo(0, 7)];
@@ -29,27 +29,28 @@ function addRandomNodes(){
         width: randomFromTo(20, 100),
         height: randomFromTo(20, 100),
         color: colors[randomFromTo(0, 9)],
-        shape: shapes[randomFromTo(0, 3)],
+        shape: shapes[randomFromTo(0, 7)],
         //example: content, position, color, font
         label: new NodeLabel(pos, pos, colors[randomFromTo(0, 9)], randomFromTo(10, 20).toString() + 'px ' + fontFamilies[randomFromTo(0, 6)]),
     }
 }
 
-function addRandomEdges(nNodes){
+function addRandomEdges (nNodes){
     var colors = ["green", "blue", "red", "yellow", "magenta", "orange", "brown", "purple", "pink", "cyan"];
     var shapes = ["straight", "curve", "loop"];
     var arrows = ["none", "triangle", "round", "square", "rhomb"];
     var positions = ["TopLeft", "TopCenter", "TopRight", "CenterLeft", "CenterRight", "BottomLeft", "BottomCenter", "BottomRight"];
-    var fontFamilies = ["Times", "Times New Roman", "Georgia", "Verdana", "Arial", "cursive", "fantasy"];
+    var fontFamilies = ["Times", "Times New Roman"];
     var pos = positions[randomFromTo(0, 7)];
+    console.log(randomFromTo(0, nNodes-1))
     return{
         id: 'idEdge',
-        from: 'id' + randomFromTo(0, nNodes-1).toString,
-        to:  'id' + randomFromTo(0, nNodes-1).toString,
+        from: 'id' + randomFromTo(0, nNodes-1).toString(),
+        to:  'id' + randomFromTo(0, nNodes-1).toString(),
         width: randomFromTo(3, 10),
         color: colors[randomFromTo(0, 9)],
         shape: shapes[randomFromTo(0, 1)],
-        shape: arrows[randomFromTo(0, 4)],
+        arrow: arrows[randomFromTo(0, 4)],
         //example: content, position, color, font
         label: null,
     }
@@ -67,13 +68,14 @@ function createFigures(nNodes, nEdges){
     drawCanvas();
 }
 
-function canvasClick(e){
-    var selectFigure = elements.previousSelectedFigure(getMousePos(e));
+function canvasClick(e){ 
+    var selectFigure = elements.isSelectedFigure(getMousePos(e));
     if (previousSelectedFigure != null) previousSelectedFigure.isSelected = false;
 
-    if (selectFigure.isSelectedFigure){
+    if (selectFigure.isSelectFigure){
         previousSelectedFigure = selectFigure.figure;
         previousSelectedFigure.isSelected = true;
+        isDragging = true;
     }
     else{
         previousSelectedFigure = null;

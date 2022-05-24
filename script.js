@@ -80,6 +80,7 @@ ctx.quadraticCurveTo(380,100, 360, 20);//через одну контрольн�
 ctx.stroke();
 
 ctx.beginPath();
+ctx.rotate(0.45);
 ctx.moveTo(50, 400);
 ctx.lineTo(200, 400);
 ctx.lineTo(125, 350);
