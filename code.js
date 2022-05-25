@@ -38,21 +38,21 @@ function addRandomNodes (){
 function addRandomEdges (nNodes){
     var colors = ["green", "blue", "red", "yellow", "magenta", "orange", "brown", "purple", "pink", "cyan"];
     var shapes = ["straight", "curve", "loop"];
-    var arrows = ["none", "triangle", "round", "square", "rhomb"];
-    var positions = ["TopLeft", "TopCenter", "TopRight", "CenterLeft", "CenterRight", "BottomLeft", "BottomCenter", "BottomRight"];
+    var arrows = ["none", "triangle", "round", "square", "rhomb", "vee"];
+    var positions = ["TopCenterLable", "BottomCenterLable"];
     var fontFamilies = ["Times", "Times New Roman"];
-    var pos = positions[randomFromTo(0, 7)];
-    console.log(randomFromTo(0, nNodes-1))
+    var pos = positions[randomFromTo(0, 1)];
+    var arrow = arrows[randomFromTo(0,5)]
     return{
         id: 'idEdge',
         from: 'id' + randomFromTo(0, nNodes-1).toString(),
         to:  'id' + randomFromTo(0, nNodes-1).toString(),
         width: randomFromTo(3, 10),
         color: colors[randomFromTo(0, 9)],
-        shape: shapes[randomFromTo(0, 1)],
-        arrow: arrows[randomFromTo(0, 4)],
+        shape: shapes[randomFromTo(0, 2)],
+        arrow: new EdgeArrow(arrow, colors[randomFromTo(0, 9)]),
         //example: content, position, color, font
-        label: null,
+        label: new EdgeLabel(pos, pos, colors[randomFromTo(0, 9)], randomFromTo(10, 20).toString() + 'px ' + fontFamilies[randomFromTo(0, 6)]),
     }
 }
 

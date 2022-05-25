@@ -376,6 +376,24 @@ class Figures{
     }
 }
 
+class EdgeLabel{
+    constructor(content, position, color, font){
+        this.content = (content == null) ? "" : content;
+        this.position = (position == null) ? "TopCenter" : position;
+        this.color = (color == null) ? "black" : color;
+        this.font = (font == null) ? "20px cursive" : font;
+        this.lenght = 0;
+    }
+}
+
+class EdgeArrow{
+    constructor(arrow, color){
+        this.arrow = (arrow == null) ? "none" : arrow;
+        this.color = (color == null) ? "black" : color;
+        this.lenght = 0;
+    }
+}
+
 class Edge{
     constructor(id, from, to, width, color, shape, arrow, label, direction){
         this.id = id;
@@ -384,8 +402,8 @@ class Edge{
         this.width = (width == null) ? randomFromTo(3, 10) : width;
         this.color = (color == null) ? "grey" : color;
         this.shape = (shape == null) ? "straight" : shape;
-        this.arrow = (arrow == null) ? "none" : arrow;
-        this.label = (label == null) ? null : label;
+        this.arrow = (arrow == null) ? new EdgeArrow() : arrow;
+        this.label = (label == null) ? new EdgeLabel() : label;
         this.direction = (direction == null) ? 1 : direction;
         this.isSelected = false;
     }
@@ -399,6 +417,9 @@ class Edge{
                 context.lineWidth = this.width;
                 context.strokeStyle = this.color;
                 context.stroke();
+                //super.draw();
+                this.addlabel();
+                this.addarrow();          
                 break;
             case "curve":
                 context.beginPath();
@@ -409,6 +430,9 @@ class Edge{
                 context.lineWidth = this.width;
                 context.strokeStyle = this.color;
                 context.stroke();
+                //super.draw();
+                this.addlabel();
+                this.addarrow();
                 break;
             case "loop":
                 context.beginPath();
@@ -418,8 +442,182 @@ class Edge{
                 context.arc(this.from.x, this.from.y, radius, 0, 2 * Math.PI);
                 context.strokeStyle = this.color;
                 context.stroke();
+                //super.draw();
+                this.addlabel(radius);
+                //this.addarrow();
         }
     }
+
+    addlabel(radius){
+        context.font = this.label.font;
+        context.fillStyle = this.label.color;
+        this.label.lenght = context.measureText(this.label.content).width;
+        var labelPosition = this.getLabelPosition(radius);
+        context.fillText(this.label.content, labelPosition.x, labelPosition.y);
+    }
+
+    getLabelPosition(radius){
+        var x = 0; var y = 0;        
+        switch (this.label.position){
+            case "TopCenterLable":
+                if (this.shape == "loop") {
+                    console.log("TopCenter loop")
+                    
+                    x = this.from.centerX - radius*2 - this.label.lenght;
+                    y = this.from.centerY - radius*2  - (this.width + 5);
+                }else{
+                    console.log("TopCenter no loop")
+                    x = (this.from.centerX+this.to.centerX) / 2 - this.label.lenght / 2;
+                    y = (this.from.centerY+this.to.centerY) / 2 - (this.width + 10);
+                }       
+                break;
+            case "BottomCenterLable":
+                if (this.shape == "loop") {
+                    console.log("TopCenter loop")
+                    x = this.from.centerX - radius*2 - this.label.lenght;
+                    y = this.from.centerY - radius*2  - (this.width + 5);
+                }else{
+                    console.log("TopCenter no loop")
+                    x = (this.from.centerX+this.to.centerX) / 2 - this.label.lenght / 2;
+                    y = (this.from.centerY+this.to.centerY) / 2 + this.width + 10;
+                }
+                break;                    
+        }
+        console.log(this.label.position, x,y)
+        return {x, y}       
+    }
+
+    addarrow(){
+        context.fillStyle = this.arrow.color;
+        //var arrowPosition = this.getArrowPosition();
+        
+        this.getArrowPosition();
+        context.lineWidth = 2;
+        context.strokeStyle = "black";
+        context.fillStyle = this.color;
+        context.fill()
+        context.stroke();
+        //context.fillText(this.label.content, labelPosition.x, labelPosition.y);
+        
+    }
+
+    getArrowPosition(){
+        var x1 = 0; var y1 = 0;
+        var x2 = 0; var y2 = 0;
+        var x3 = 0; var y3 = 0;
+        var x4 = 0; var y4 = 0;
+        var step1 = 0; var step2 = 0;
+        if (this.to.radius){
+            var step1 = this.to.radius;
+        }
+        else{
+            step1 = Math.sqrt(this.to.height**2 + this.to.width**2)/2
+        }
+        step2 = step1 + 30;
+        
+        var dx = this.from.centerX - this.to.centerX;
+        var dy = this.from.centerY - this.to.centerY;
+        var r = Math.sqrt(dx ** 2 + dy ** 2) ;
+        x1 = dx * (step1/r) + this.to.centerX;
+        y1 = dy * (step1/r) + this.to.centerY;
+        switch (this.shape){
+            case "straight":
+                x2 = dx * (step2/r) + this.to.centerX;
+                y2 = dy * (step2/r) + this.to.centerY;
+                break;
+            case "curve":
+                //Доделать
+                console.log("Пока не знаю как")
+                x2 = dx * (step2/r) + this.to.centerX;
+                y2 = dy * (step2/r) + this.to.centerY;
+                break;
+        }
+        switch (this.arrow.arrow){
+            case "none":
+                
+                break;
+            case "triangle":
+                var alpha =  Math.PI/8;
+                x3 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
+                y3 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
+                alpha = -Math.PI/8;
+                x4 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
+                y4 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
+                context.beginPath();
+                context.moveTo(x1, y1);
+                context.lineTo(x3, y3);
+                context.lineTo(x4, y4);
+                context.lineTo(x1, y1);
+                context.lineWidth = 2;
+                context.strokeStyle = "black";
+                context.fillStyle = this.color;
+                context.fill()
+                context.stroke();
+                break;
+            case "round":   
+                context.beginPath();
+                context.arc(x1, y1, 7, 0, 2*Math.PI);
+                context.fillStyle = this.color;
+                context.lineWidth = 2;
+                context.strokeStyle = "black";
+                context.stroke();
+                context.fill();
+                break;
+            case "square":
+                context.moveTo(x1, y1);
+                context.lineTo(x1 + 10, y1);
+                context.lineTo(x1 + 10, y1 + 10);
+                context.lineTo(x1, y1 + 10);
+                context.lineTo(x1, y1);                
+                break;
+            case "rhomb":
+                var x5 = 0; var y5 = 0
+                x5 = dx * (step2/r) + this.to.centerX;
+                y5 = dy * (step2/r) + this.to.centerY;
+                step2 = step1 + 15;
+                x2 = dx * (step2/r) + this.to.centerX;
+                y2 = dy * (step2/r) + this.to.centerY;
+                var alpha =  Math.PI/8;
+                x3 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
+                y3 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
+                alpha = -Math.PI/8;
+                x4 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
+                y4 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
+                context.beginPath();
+                context.moveTo(x1, y1);
+                context.lineTo(x3, y3);
+                context.lineTo(x5, y5);
+                context.lineTo(x4, y4);
+                context.lineTo(x1, y1);
+                break;
+            case "vee":
+                var x5 = 0; var y5 = 0
+                step2 = step1 + 15;
+                x5 = dx * (step2/r) + this.to.centerX;
+                y5 = dy * (step2/r) + this.to.centerY;
+                var alpha =  Math.PI/8;
+                x3 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
+                y3 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
+                alpha = -Math.PI/8;
+                x4 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
+                y4 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
+                context.beginPath();
+                context.moveTo(x1, y1);
+                context.lineTo(x3, y3);
+                context.lineTo(x5, y5);
+                context.lineTo(x4, y4);
+                context.lineTo(x1, y1);
+                break;
+
+                
+        }
+        
+        
+    }
+
+   
+
+
 }
 
 function randomFromTo(from, to){
