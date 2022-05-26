@@ -209,6 +209,6 @@ function changeScale(e){
 function getMousePos(e){
     return {
         x: e.clientX - canvas.offsetLeft,
-        y: e.clientY - canvas.offsetTop
+        y: e.ClientY - canvas.offsetTop
     };
 }

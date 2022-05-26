@@ -486,7 +486,7 @@ class Edge{
         context.strokeStyle = "black";
         context.fillStyle = this.color;
         context.fill()
-        //context.stroke();
+        context.stroke();
         //context.fillText(this.label.content, labelPosition.x, labelPosition.y);
         
     }
@@ -503,7 +503,7 @@ class Edge{
         else{
             step1 = Math.sqrt(this.to.size**2 + this.to.size**2)/2
         }
-        step2 = step1 + 40;
+        step2 = step1 + 50;
         
         var dx = this.from.center.x - this.to.center.x;
         var dy = this.from.center.y - this.to.center.y;
@@ -548,13 +548,13 @@ class Edge{
                 var x5 = 0; var y5 = 0
                 x5 = dx * (step2/r) + this.to.center.x;
                 y5 = dy * (step2/r) + this.to.center.y;
-                step2 = step1 + 30;
+                step2 = step1 + 25;
                 x2 = dx * (step2/r) + this.to.center.x;
                 y2 = dy * (step2/r) + this.to.center.y;
-                var alpha =  Math.PI/6;
+                var alpha =  Math.PI/8;
                 x3 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
                 y3 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
-                alpha = -Math.PI/6;
+                alpha = -Math.PI/8;
                 x4 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
                 y4 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
                 context.beginPath();
@@ -566,7 +566,7 @@ class Edge{
                 break;
             case "vee":
                 var x5 = 0; var y5 = 0
-                step2 = step1 + 20;
+                step2 = step1 + 25;
                 x5 = dx * (step2/r) + this.to.center.x;
                 y5 = dy * (step2/r) + this.to.center.y;
                 var alpha =  Math.PI/8;
