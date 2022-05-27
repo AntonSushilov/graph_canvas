@@ -486,7 +486,7 @@ class Edge{
         context.strokeStyle = "black";
         context.fillStyle = this.color;
         context.fill()
-        //context.stroke();
+        context.stroke();
         //context.fillText(this.label.content, labelPosition.x, labelPosition.y);
         
     }
@@ -507,7 +507,7 @@ class Edge{
         
         var dx = this.from.center.x - this.to.center.x;
         var dy = this.from.center.y - this.to.center.y;
-        var r = Math.sqrt(dx ** 2 + dy ** 2) ;
+        var r = Math.sqrt(dx ** 2 + dy ** 2);
         x1 = dx * (step1/r) + this.to.center.x;
         y1 = dy * (step1/r) + this.to.center.y;
         switch (this.shape){
@@ -518,8 +518,38 @@ class Edge{
             case "curve":
                 //Доделать
                 console.log("Пока не знаю как")
-                x2 = dx * (step2/r) + this.to.center.x;
-                y2 = dy * (step2/r) + this.to.center.y;
+                
+
+
+
+
+                var controlX = (this.from.center.x + this.to.center.x - 50 * this.direction) / 2;
+                var controlY = (this.from.center.y + this.to.center.y - 50 * this.direction) / 2;
+                
+
+                context.beginPath();
+                context.arc(controlX, controlY, 10, 0, 2*Math.PI);
+                context.fillStyle = this.color;
+                context.fill();
+                dx = controlX - this.to.center.x;
+                dy = controlY - this.to.center.y;
+                r = Math.sqrt(dx ** 2 + dy ** 2);
+                x1 = dx * (step1/r) + this.to.center.x;
+                y1 = dy * (step1/r) + this.to.center.y;
+
+                var arrowWidth = 50;
+                //x2 = dx * (step2/r) + this.to.center.x;
+                //y2 = dy * (step2/r) + this.to.center.y;
+                var arrowAngle = Math.atan2(controlX - this.to.center.x, controlY - this.to.center.y) + Math.PI;
+                x2 = this.to.center.x - (arrowWidth * Math.sin(arrowAngle - Math.PI / 6))
+                y2 = this.to.center.y - (arrowWidth * Math.cos(arrowAngle - Math.PI / 6))
+                x3 = this.to.center.x - (arrowWidth * Math.sin(arrowAngle + Math.PI / 6))
+                y3 = this.to.center.y - (arrowWidth * Math.cos(arrowAngle + Math.PI / 6))
+                context.beginPath();
+                context.moveTo(x1,y1);
+                context.lineTo(x2,y2)
+                context.lineTo(x3,y3)
+                context.closePath();
                 break;
         }
         switch (this.arrow.arrow){
@@ -533,11 +563,11 @@ class Edge{
                 alpha = -Math.PI/8;
                 x4 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
                 y4 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
-                context.beginPath();
-                context.moveTo(x1, y1);
-                context.lineTo(x3, y3);
-                context.lineTo(x4, y4);
-                context.closePath();
+                //context.beginPath();
+                //context.moveTo(x1, y1);
+                //context.lineTo(x3, y3);
+                //context.lineTo(x4, y4);
+                //context.closePath();
                 //context.lineWidth = 2;
                 //context.strokeStyle = "black";
                 context.fillStyle = this.color;

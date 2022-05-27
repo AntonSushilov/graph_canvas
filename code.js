@@ -81,7 +81,7 @@ function paintCircle(array, groupName, baseX, baseY){
 
 
 
-createFigures(10, 5);
+createFigures(2, 1);
 
 function randomFromTo(from, to){
     return Math.floor(Math.random() * (to - from + 1) + from);
@@ -116,17 +116,18 @@ function addRandomEdges(nNodes){
     var positions = ["TopCenterLable", "BottomCenterLable"];
     var fontFamilies = ["Times", "Times New Roman", "Georgia", "Verdana", "Arial", "cursive", "fantasy"];
     var pos = positions[randomFromTo(0, 1)];
-    var content = pos
-    var arrow = arrows[randomFromTo(0,3)]
-    var color = colors[randomFromTo(0, 9)]
-    var font = randomFromTo(10, 20).toString() + 'px ' + fontFamilies[randomFromTo(0, 6)]
+    var content = pos;
+    var arrow = arrows[randomFromTo(1, 1)];
+    var shape = shapes[randomFromTo(1, 1)];
+    var color = colors[randomFromTo(0, 9)];
+    var font = randomFromTo(10, 20).toString() + 'px ' + fontFamilies[randomFromTo(0, 6)];
     return{
         id: 'idEdge',
         from: 'id' + randomFromTo(0, nNodes-1).toString(),
         to:  'id' + randomFromTo(0, nNodes-1).toString(),
         width: randomFromTo(3, 10),
         color: color,
-        shape: shapes[randomFromTo(0, 1)],
+        shape: shape,
         arrow: new EdgeArrow(arrow, color),
         //example: content, position, color, font
         label: new EdgeLabel(content, pos, color, font),

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+<style>
+#myCanvas {
+  border: 1px solid black;
+}
+</style>
+</head>
+<body>
+  <canvas id="myCanvas" width="250" height="150"></canvas>
+<script>
+var canvas = document.querySelector('#myCanvas');
+var ctx = canvas.getContext('2d');
+ 
+var contextX = 100;
+var contextY = 10;
+var endPointX = 100;
+var endPointY = 30;
+var controlPointX = 90;
+var controlPointY = 20;
+ 
+drawCurvedArrow(contextX, contextY,
+                endPointX, endPointY,
+                controlPointX, controlPointY,
+                3, // arrowWidth, попробуйте 30, например!
+                20, // ширина стрелки, попробуйте меньшие значения, 10 ...
+                'blue');
+ 
+ 
+function drawCurvedArrow(startPointX, startPointY,
+                         endPointX, endPointY,
+                         quadPointX, quadPointY,
+                         lineWidth,
+                         arrowWidth, 
+                         color) {
+  //ХОРОШАЯ ПРАКТИКА: функция меняет цвет и ширину линии -> сохранить контекст!
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+ 
+  // угол наклона касательной, используется для рисования наконечника стрелы
+  var arrowAngle = Math.atan2(quadPointX - endPointX, quadPointY - endPointY) + Math.PI;
+ 
+  // начать новый путь
+  ctx.beginPath();
+  ctx.moveTo(startPointX, startPointY);
+ 
+  ctx.quadraticCurveTo(quadPointX, quadPointY, endPointX, endPointY);
+ 
+  ctx.moveTo(endPointX - (arrowWidth * Math.sin(arrowAngle - Math.PI / 6)), 
+             endPointY - (arrowWidth * Math.cos(arrowAngle - Math.PI / 6)));
+ 
+  ctx.lineTo(endPointX, endPointY);
+ 
+  ctx.lineTo(endPointX - (arrowWidth * Math.sin(arrowAngle + Math.PI / 6)), 
+             endPointY - (arrowWidth * Math.cos(arrowAngle + Math.PI / 6)));
+ 
+  ctx.stroke();
+  ctx.closePath();
+ 
+  // ХОРОШАЯ ПРАКТИКА -> восстановить контекст, как мы его сохранили в начале
+   // функции
+  ctx.restore();
+}
+</script>
+</body>
+</html>
