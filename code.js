@@ -118,7 +118,7 @@ function addRandomEdges(nNodes){
     var pos = positions[randomFromTo(0, 1)];
     var content = pos;
     var arrow = arrows[randomFromTo(1, 1)];
-    var shape = shapes[randomFromTo(1, 1)];
+    var shape = shapes[randomFromTo(0, 1)];
     var color = colors[randomFromTo(0, 9)];
     var font = randomFromTo(10, 20).toString() + 'px ' + fontFamilies[randomFromTo(0, 6)];
     return{
