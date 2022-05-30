@@ -479,7 +479,13 @@ class Edge{
                     
                     x = this.from.center.x - radius * 2 - this.label.lenght;
                     y = this.from.center.y - radius * 2  - (this.width + 5);
-                }else{
+                }else if (this.shape == "curve"){
+                    var controlPoint = this.controlPoint(this.from.center.x, this.from.center.y, this.to.center.x, this.to.center.y, this.direction);
+                    x = controlPoint.x - this.label.lenght / 2;
+                    y = controlPoint.y;
+                    console.log()
+                }
+                else{
                     //console.log("TopCenter no loop")
                     x = (this.from.center.x+this.to.center.x) / 2 - this.label.lenght / 2;
                     y = (this.from.center.y+this.to.center.y) / 2 - (this.width + 10);
@@ -490,6 +496,10 @@ class Edge{
                     //console.log("TopCenter loop")
                     x = this.from.center.x - radius*2 - this.label.lenght;
                     y = this.from.center.y - radius*2  - (this.width + 5);
+                }else if (this.shape == "curve"){
+                    var controlPoint = this.controlPoint(this.from.center.x, this.from.center.y, this.to.center.x, this.to.center.y, this.direction);
+                    x = controlPoint.x  - this.label.lenght / 2;
+                    y = controlPoint.y;
                 }else{
                     //console.log("TopCenter no loop")
                     x = (this.from.center.x+this.to.center.x) / 2 - this.label.lenght / 2;
