@@ -418,9 +418,8 @@ class Edge{
             case "curve":
                 context.beginPath();
                 context.moveTo(this.from.center.x, this.from.center.y);
-                var controlPoint = this.controlPoint(this.from.center.x, this.from.center.y, this.to.center.x, this.to.center.y, this.direction)
-                var controlX = controlPoint.x;
-                var controlY = controlPoint.y;
+                var controlX = (this.from.center.x + this.to.center.x - 100 * this.direction) / 2;
+                var controlY = (this.from.center.y + this.to.center.y - 100 * this.direction) / 2;
                 context.quadraticCurveTo(controlX, controlY, this.to.center.x, this.to.center.y);
                 context.lineWidth = this.width;
                 context.strokeStyle = this.color;
@@ -440,28 +439,6 @@ class Edge{
         }
     }
 
-    controlPoint(x1, y1, x3, y3, direction){
-        var x2 = 0; var y2 = 0;
-        var cX = (x3+x1) / 2;
-        var cY = (y3+y1) / 2;
-        var koef = (y3-y1)/(x3-x1);
-        if (koef == 0){
-            koef = 0.001
-        }
-        console.log(koef)
-        koef = -1 / koef;
-        var b = cY-koef*cX;
-        var R = 100;
-        var a = 1+koef**2
-        var d = 2*koef*b - 2*cX -2*koef*cY
-        var c = cX**2 + b**2 + cY**2 - 2*b*cY - R**2 
-        var D = d**2 - 4*a*c
-        x2 = (d*(-1) + direction * Math.sqrt(D)) / (2*a)
-        y2 = koef*x2 + b
-        
-        return {x: x2, y: y2}
-    }
-
     addlabel(radius){
         context.font = this.label.font;
         context.fillStyle = this.label.color;
@@ -479,13 +456,7 @@ class Edge{
                     
                     x = this.from.center.x - radius * 2 - this.label.lenght;
                     y = this.from.center.y - radius * 2  - (this.width + 5);
-                }else if (this.shape == "curve"){
-                    var controlPoint = this.controlPoint(this.from.center.x, this.from.center.y, this.to.center.x, this.to.center.y, this.direction);
-                    x = controlPoint.x - this.label.lenght / 2;
-                    y = controlPoint.y;
-                    console.log()
-                }
-                else{
+                }else{
                     //console.log("TopCenter no loop")
                     x = (this.from.center.x+this.to.center.x) / 2 - this.label.lenght / 2;
                     y = (this.from.center.y+this.to.center.y) / 2 - (this.width + 10);
@@ -496,10 +467,6 @@ class Edge{
                     //console.log("TopCenter loop")
                     x = this.from.center.x - radius*2 - this.label.lenght;
                     y = this.from.center.y - radius*2  - (this.width + 5);
-                }else if (this.shape == "curve"){
-                    var controlPoint = this.controlPoint(this.from.center.x, this.from.center.y, this.to.center.x, this.to.center.y, this.direction);
-                    x = controlPoint.x  - this.label.lenght / 2;
-                    y = controlPoint.y;
                 }else{
                     //console.log("TopCenter no loop")
                     x = (this.from.center.x+this.to.center.x) / 2 - this.label.lenght / 2;
@@ -513,12 +480,13 @@ class Edge{
 
     addarrow(){
         context.fillStyle = this.arrow.color;
+        //var arrowPosition = this.getArrowPosition();
         this.getArrowPosition();
         context.lineWidth = 2;
         context.strokeStyle = "black";
         context.fillStyle = this.color;
-        
-        //context.stroke();
+        context.fill()
+        context.stroke();
         //context.fillText(this.label.content, labelPosition.x, labelPosition.y);
         
     }
@@ -533,41 +501,36 @@ class Edge{
             var step1 = this.to.radius;
         }
         else{
-            step1 = Math.sqrt(this.to.size**2 + this.to.size**2)
+            step1 = Math.sqrt(this.to.size**2 + this.to.size**2)/2
         }
-        step2 = step1 + 30;
-
+        step2 = step1 + 50;
         
+        var dx = this.from.center.x - this.to.center.x;
+        var dy = this.from.center.y - this.to.center.y;
+        var r = Math.sqrt(dx ** 2 + dy ** 2) ;
+        x1 = dx * (step1/r) + this.to.center.x;
+        y1 = dy * (step1/r) + this.to.center.y;
         switch (this.shape){
             case "straight":
-                var dx = this.from.center.x - this.to.center.x;
-                var dy = this.from.center.y - this.to.center.y;
-                var r = Math.sqrt(dx ** 2 + dy ** 2);
-                
+                x2 = dx * (step2/r) + this.to.center.x;
+                y2 = dy * (step2/r) + this.to.center.y;
                 break;
             case "curve":
                 //Доделать
-                var controlPoint = this.controlPoint(this.from.center.x, this.from.center.y, this.to.center.x, this.to.center.y, this.direction)
-                var dx = controlPoint.x - this.to.center.x;
-                var dy = controlPoint.y - this.to.center.y;
-                var r = Math.sqrt(dx ** 2 + dy ** 2);
+                console.log("Пока не знаю как")
+                x2 = dx * (step2/r) + this.to.center.x;
+                y2 = dy * (step2/r) + this.to.center.y;
                 break;
         }
-
-
         switch (this.arrow.arrow){
             case "none":
                 
                 break;
             case "triangle":
-                x1 = dx * (step1/r) + this.to.center.x;
-                y1 = dy * (step1/r) + this.to.center.y;
-                x2 = dx * (step2/r) + this.to.center.x;
-                y2 = dy * (step2/r) + this.to.center.y;
-                var alpha =  Math.PI/4;
+                var alpha =  Math.PI/8;
                 x3 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
                 y3 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
-                alpha = -Math.PI/4;
+                alpha = -Math.PI/8;
                 x4 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
                 y4 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
                 context.beginPath();
@@ -575,26 +538,23 @@ class Edge{
                 context.lineTo(x3, y3);
                 context.lineTo(x4, y4);
                 context.closePath();
-                context.lineWidth = 2;
-                context.strokeStyle = "black";
+                //context.lineWidth = 2;
+                //context.strokeStyle = "black";
                 context.fillStyle = this.color;
                 context.fill()
+                //context.stroke();
                 break;
             case "rhomb":
                 var x5 = 0; var y5 = 0
-                x1 = dx * (step1/r) + this.to.center.x;
-                y1 = dy * (step1/r) + this.to.center.y;
-                step2 = step1 + 30;
-                x2 = dx * (step2/r) + this.to.center.x;
-                y2 = dy * (step2/r) + this.to.center.y;
-
-                step2 = step1 + 45;
                 x5 = dx * (step2/r) + this.to.center.x;
                 y5 = dy * (step2/r) + this.to.center.y;
-                var alpha =  Math.PI/6;
+                step2 = step1 + 25;
+                x2 = dx * (step2/r) + this.to.center.x;
+                y2 = dy * (step2/r) + this.to.center.y;
+                var alpha =  Math.PI/8;
                 x3 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
                 y3 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
-                alpha = -Math.PI/6;
+                alpha = -Math.PI/8;
                 x4 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
                 y4 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
                 context.beginPath();
@@ -603,25 +563,16 @@ class Edge{
                 context.lineTo(x5, y5);
                 context.lineTo(x4, y4);
                 context.closePath();
-                context.lineWidth = 2;
-                context.strokeStyle = "black";
-                context.fillStyle = this.color;
-                context.fill()
                 break;
             case "vee":
                 var x5 = 0; var y5 = 0
-                x1 = dx * (step1/r) + this.to.center.x;
-                y1 = dy * (step1/r) + this.to.center.y;
-                step2 = step1 + 35;
-                x2 = dx * (step2/r) + this.to.center.x;
-                y2 = dy * (step2/r) + this.to.center.y;
-                step2 = step1 + 15;
+                step2 = step1 + 25;
                 x5 = dx * (step2/r) + this.to.center.x;
                 y5 = dy * (step2/r) + this.to.center.y;
-                var alpha =  Math.PI/6;
+                var alpha =  Math.PI/8;
                 x3 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
                 y3 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
-                alpha = -Math.PI/6;
+                alpha = -Math.PI/8;
                 x4 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
                 y4 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
                 context.beginPath();
@@ -630,10 +581,6 @@ class Edge{
                 context.lineTo(x5, y5);
                 context.lineTo(x4, y4);
                 context.closePath();
-                context.lineWidth = 2;
-                context.strokeStyle = "black";
-                context.fillStyle = this.color;
-                context.fill()
                 break;
         }
     }

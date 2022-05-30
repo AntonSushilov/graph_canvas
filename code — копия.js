@@ -16,38 +16,15 @@ canvas.onwheel = changeScale;
 
 
 //Рисование из json файла
+/*
 
+const testElements = import('./testElements.json', {
+    assert: {
+        type: 'json'
+    }
+});
 
-
-
-
-testElems = '{ \
-    "layout": { "name": "Circle", "count": 2, "nameGroups": ["Node1", "Node2", "Edge"], "centerGroups": [{"x": 220, "y": 220}, {"x": 700, "y": 500}]}, \
-    "figures": [ \
-        {"id": "id0", "shape": "Triangle", "color": "green", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},\
-        {"id": "id1", "shape": "Circle", "color": "blue", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},\
-        {"id": "id2", "shape": "Rectangle", "color": "purple", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},\
-        {"id": "id3", "shape": "Rhomb", "color": "red", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},\
-        {"id": "id4", "shape": "Pentagon", "color": "orange", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},\
-        {"id": "id5", "shape": "Hexagon", "color": "green", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},\
-        {"id": "id6", "shape": "Plus", "color": "purple", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},\
-        {"id": "id7", "shape": "Vee", "color": "red", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},\
-        {"id": "id8", "shape": "Triangle", "color": "green", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},\
-        {"id": "id9", "shape": "Triangle", "color": "blue", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},\
-        {"id": "id10", "shape": "Triangle", "color": "orange", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},\
-        {"id": "id11", "shape": "Circle", "color": "magenta", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},\
-        {"id": "id12", "shape": "Rectangle", "color": "green", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},\
-        {"id": "id13", "shape": "Rhomb", "color": "pink", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},\
-        {"id": "id14", "shape": "Pentagon", "color": "green", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},\
-        {"id": "id15", "shape": "Hexagon", "color": "red", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},\
-        {"id": "id16", "shape": "Plus", "color": "blue", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},\
-        {"id": "id17", "shape": "Vee", "color": "purple", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},\
-        {"id": "id18", "shape": "Pentagon", "color": "orange", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},\
-        {"id": "id19", "shape": "Plus", "color": "pink", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}}\
-    ] \
-}';
-
-jsonFromPython = JSON.parse(testElems);
+jsonFromPython = JSON.parse(testElements);
 createFiguresFromJSON();
 
 function createFiguresFromJSON(){
@@ -61,7 +38,7 @@ function createFiguresFromJSON(){
             }
             jsonFromPython.figures.forEach(elem => {
                 if (elem.group.includes("Node")) {
-                    elements.newNode(elem.shape, elem.id, elem.position.x, elem.position.y, elem.size.size, elem.color, null);
+                    elements.newNode(elem.shape, elem.id, elem.position.x, elem.position.y, elem.size.width, elem.size.height, elem.color, null);
                 }
             });
             break;
@@ -86,7 +63,7 @@ function paintCircle(array, groupName, baseX, baseY){
     });
     var radius = (nNode * (maxSumWH / 8)) / 2 * Math.PI; // R = L / 2 * pi, где L - длинна окружности
     var counter = 1;
-    array.filter(el => el.group == groupName).forEach(elem => {
+    array.filter(el => el/group == groupName).forEach(elem => {
         var vx = Math.cos(currentAngle) * radius;
         var vy = Math.sin(currentAngle) * radius;
         elem.position = {x: baseX + vx, y: baseY + vy};
@@ -94,6 +71,7 @@ function paintCircle(array, groupName, baseX, baseY){
         counter++;
     });
 }
+*/
 
 
 
@@ -103,8 +81,7 @@ function paintCircle(array, groupName, baseX, baseY){
 
 
 
-
-createFigures(20, 10);
+createFigures(10, 5);
 
 function randomFromTo(from, to){
     return Math.floor(Math.random() * (to - from + 1) + from);
@@ -139,18 +116,17 @@ function addRandomEdges(nNodes){
     var positions = ["TopCenterLable", "BottomCenterLable"];
     var fontFamilies = ["Times", "Times New Roman", "Georgia", "Verdana", "Arial", "cursive", "fantasy"];
     var pos = positions[randomFromTo(0, 1)];
-    var content = pos;
-    var arrow = arrows[randomFromTo(0, 3)];
-    var shape = shapes[randomFromTo(1, 1)];
-    var color = colors[randomFromTo(0, 9)];
-    var font = randomFromTo(10, 20).toString() + 'px ' + fontFamilies[randomFromTo(0, 6)];
+    var content = pos
+    var arrow = arrows[randomFromTo(0,3)]
+    var color = colors[randomFromTo(0, 9)]
+    var font = randomFromTo(10, 20).toString() + 'px ' + fontFamilies[randomFromTo(0, 6)]
     return{
         id: 'idEdge',
         from: 'id' + randomFromTo(0, nNodes-1).toString(),
         to:  'id' + randomFromTo(0, nNodes-1).toString(),
         width: randomFromTo(3, 10),
         color: color,
-        shape: shape,
+        shape: shapes[randomFromTo(0, 1)],
         arrow: new EdgeArrow(arrow, color),
         //example: content, position, color, font
         label: new EdgeLabel(content, pos, color, font),
@@ -233,6 +209,6 @@ function changeScale(e){
 function getMousePos(e){
     return {
         x: e.clientX - canvas.offsetLeft,
-        y: e.clientY - canvas.offsetTop
+        y: e.ClientY - canvas.offsetTop
     };
 }
