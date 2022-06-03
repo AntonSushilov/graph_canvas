@@ -375,11 +375,15 @@ class Edge{
         this.direction = (direction == null) ? 1 : direction;
         this.isSelected = false;
         this.group = "Edge"
+        this.arrowLength = 30;
+        this.curveRadius = 100;
     }
 
     dragCanvas(translatePos, scale){
         this.width = this.width * scale;
         //доделать для стрелочек * scale
+        this.arrowLength = this.arrowLength * scale;
+        this.curveRadius = this.curveRadius * scale;
     }
 
     draw(){
@@ -433,7 +437,7 @@ class Edge{
         //console.log(koef)
         koef = -1 / koef;
         var b = cY-koef*cX;
-        var R = 100;
+        var R = this.curveRadius;
         var a = 1+koef**2
         var d = 2*koef*b - 2*cX -2*koef*cY
         var c = cX**2 + b**2 + cY**2 - 2*b*cY - R**2 
@@ -526,7 +530,7 @@ class Edge{
         else{
             step1 = Math.sqrt(this.to.size**2 + this.to.size**2)
         }
-        step2 = step1 + 30;
+        step2 = step1 + this.arrowLength;
 
         
         switch (this.shape){
@@ -540,7 +544,7 @@ class Edge{
                 //Доделать
                 var controlPoint = this.controlPoint(this.from.center.x, this.from.center.y, this.to.center.x, this.to.center.y, this.direction);
                 var l = this.straightLength(this.from.center.x, this.from.center.y, this.to.center.x, this.to.center.y);
-                console.log(l)
+                //console.log(l)
                 var t = 0;
                 if (l>500){
                     t = 0.95;
@@ -551,7 +555,7 @@ class Edge{
                     t = 0.82
                 }else{
                     t = 0.8
-                    console.log(t)
+                    //console.log(t)
                 }
                 
                 
@@ -559,10 +563,10 @@ class Edge{
                 var cpx = this.pointOnCurve(this.from.center.x, controlPoint.x, this.to.center.x, t); 
                 var cpy = this.pointOnCurve(this.from.center.y, controlPoint.y, this.to.center.y, t);
 
-                context.beginPath();
-                context.arc(cpx, cpy, 10, 0, 2*Math.PI);
-                context.fillStyle = this.color;
-                context.fill();
+                //context.beginPath();
+                //context.arc(cpx, cpy, 10, 0, 2*Math.PI);
+                //context.fillStyle = this.color;
+                //context.fill();
                 var dx = cpx - this.to.center.x;
                 var dy = cpy - this.to.center.y;
 
@@ -614,7 +618,7 @@ class Edge{
                 context.lineTo(x3, y3);
                 context.moveTo(x1, y1);
                 context.lineTo(x4, y4);
-                context.lineWidth = 2;
+                context.lineWidth = this.width;
                 context.strokeStyle = this.color;
                 context.stroke();
                 break;
@@ -622,10 +626,10 @@ class Edge{
                 var x5 = 0; var y5 = 0
                 x1 = dx * (step1/r) + this.to.center.x;
                 y1 = dy * (step1/r) + this.to.center.y;
-                step2 = step1 + 35;
+                step2 = step1 + this.arrowLength;
                 x2 = dx * (step2/r) + this.to.center.x;
                 y2 = dy * (step2/r) + this.to.center.y;
-                step2 = step1 + 15;
+                step2 = step1 + this.arrowLength / 2;
                 x5 = dx * (step2/r) + this.to.center.x;
                 y5 = dy * (step2/r) + this.to.center.y;
                 var alpha =  Math.PI/6;
