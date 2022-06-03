@@ -5,8 +5,9 @@ elements = new Figures();
 var previousSelectedFigure;
 var isDraggingFigure = false;
 var isDraggingCanvas = false;
-var scale = 1.0
-var translatePos = {x: 0, y: 0}
+var scale = 1.0;
+var scaleFigure = 1.0;
+var translatePos = {x: 0, y: 0};
 var lastPosition = {x: canvas.width / 2, y: canvas.height / 2};
 
 canvas.onmousedown = canvasClick;
@@ -16,11 +17,7 @@ canvas.onwheel = changeScale;
 
 
 //Рисование из json файла
-
-
-
-
-
+/*
 testElems = '{ \
     "layout": { "name": "Circle", "count": 2, "nameGroups": ["Node1", "Node2", "Edge"], "centerGroups": [{"x": 220, "y": 220}, {"x": 700, "y": 500}]}, \
     "figures": [ \
@@ -94,17 +91,8 @@ function paintCircle(array, groupName, baseX, baseY){
         counter++;
     });
 }
-
-
-
-
-
-
-
-
-
-
-createFigures(20, 10);
+*/
+createFigures(2, 1);
 
 function randomFromTo(from, to){
     return Math.floor(Math.random() * (to - from + 1) + from);
@@ -113,7 +101,7 @@ function randomFromTo(from, to){
 function addRandomNodes(){
     //example: id, x, y, width, height, color, shape, label
     var colors = ["green", "blue", "red", "yellow", "magenta", "orange", "brown", "purple", "pink", "cyan"];
-    var shapes = ["Circle", "Triangle", "Rectangle", "Rhomb", "Pentagon", "Hexagon", "Plus", "Vee"];
+    var shapes = ["Circle", "Triangle", "Rectangle", "Rhomb", "Pentagon", "Hexagon", "Plus"];
     var positions = ["TopLeft", "TopCenter", "TopRight", "CenterLeft", "CenterRight", "BottomLeft", "BottomCenter", "BottomRight"];
     var fontFamilies = ["Times", "Times New Roman", "Georgia", "Verdana", "Arial", "cursive", "fantasy"];
     var pos = positions[randomFromTo(0, 7)];
@@ -126,7 +114,7 @@ function addRandomNodes(){
         y: randomFromTo(0, canvas.height),
         size: randomFromTo(20, 100),
         color: color,
-        shape: shapes[randomFromTo(0, 7)],
+        shape: shapes[randomFromTo(0, 6)],
         //example: content, position, color, font
         label: new NodeLabel(content, pos, color, font),
     }
@@ -135,13 +123,13 @@ function addRandomNodes(){
 function addRandomEdges(nNodes){
     var colors = ["green", "blue", "red", "yellow", "magenta", "orange", "brown", "purple", "pink", "cyan"];
     var shapes = ["straight", "curve", "loop"];
-    var arrows = ["none", "triangle", "rhomb", "vee"];
+    var arrows = ["none", "angle", "triangle", "vee"];
     var positions = ["TopCenterLable", "BottomCenterLable"];
     var fontFamilies = ["Times", "Times New Roman", "Georgia", "Verdana", "Arial", "cursive", "fantasy"];
     var pos = positions[randomFromTo(0, 1)];
     var content = pos;
-    var arrow = arrows[randomFromTo(0, 3)];
-    var shape = shapes[randomFromTo(1, 1)];
+    var arrow = arrows[randomFromTo(0,3)];
+    var shape = shapes[randomFromTo(0, 1)];
     var color = colors[randomFromTo(0, 9)];
     var font = randomFromTo(10, 20).toString() + 'px ' + fontFamilies[randomFromTo(0, 6)];
     return{
@@ -168,11 +156,13 @@ function createFigures(nNodes, nEdges){
         //
         elements.newEdge(figure.id + i.toString(), figure.from, figure.to, figure.width, figure.color, figure.shape, figure.arrow, figure.label);
     }
+    console.log(elements)
     drawCanvas();
 }
 
 function canvasClick(e){ 
     scale = 1;
+    scaleFigure = 1;
     var selectFigure = elements.isSelectedFigure(getMousePos(e));
     if (previousSelectedFigure != null) previousSelectedFigure.isSelected = false;
 
@@ -195,10 +185,9 @@ function canvasClick(e){
 
 function drawCanvas(mousePos){
     context.clearRect(0, 0, canvas.width * 10, canvas.height * 10)
-    context.scale(scale, scale);
-    elements.figures.forEach(elem => elem.dragCanvas(translatePos));
+    //context.scale(scale, scale);
+    elements.figures.forEach(elem => elem.dragCanvas(translatePos, scaleFigure));
     elements.draw();
-    console.log(  elements.figures)
 }
 
 function stopDragging(){
@@ -224,9 +213,18 @@ function dragFigureAndCanvas(e){
 }
 
 function changeScale(e){
-    if (e.deltaY < 0) scale = 1.1;
-    else if (e.deltaY = 0) scale = 1;
-    else scale = 0.9;
+    if (e.deltaY < 0){
+        scale = 1.1;
+        scaleFigure = 1.2;
+    }
+    else if (e.deltaY = 0){
+        scale = 1;
+        scaleFigure = 1;
+    }
+    else {
+        scale = 0.9;
+        scaleFigure = 0.8;
+    }
     drawCanvas();
 }
 
