@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width">
     <title>Canvas</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <ul class="navMy myLeft">
         <li><a href="#" onclick="setVis('leftSidebar')">Фильтр</a></li>
-        <li><a href="#" onclick="sуtZoom()">Центр</a></li>
+        <li><a href="#" onclick="setZoom()">Центр</a></li>
     </ul>
     <ul class="navMy myRight">
         <li><a href="#" onclick="setVis('rightSidebar')">Легенда</a></li>
@@ -40,13 +40,56 @@
                 <input type="radio" name="colConnect" value="more" checked> Больше
                 <input type="number" name="numColMore" size="3" min="0" value="0">
                 <br>
-                <input type="radio" name="colConnect" value="more" checked> Больше
+                <input type="radio" name="colConnect" value="more" checked> Меньше
                 <input type="number" name="numColMore" size="3" min="0" value="0">
+            </p>
+            <p>
+                Сумма связей: <br>
+                <input type="radio" name="sumConnect" value="more" checked> Больше
+                <input type="number" name="numSumMore" size="3" min="-1" value="-1" maxlength="10">
+                <br>
+                <input type="radio" name="sumConnect" value="more" checked> Меньше
+                <input type="number" name="numSumMore" size="3" min="1" value="1">
             </p>
 
         </div>
+    
+        <div>
+            <br>
+            <button type="button" id="btn_my" onclick="clickFilter()" style="font-size: 14px; height: 50px;">
+                Применить фильтры
+                <img src="" width="25" height="25" style="vertical-align: middle;" alt="пикча">
+            </button>
+            <p>
+                Построить: <br>
+                <button type="button" style="font-size: 14px;" onclick="clickNodes()">Граф узла</button>
+                <button type="button" style="font-size: 14px;" onclick="clickFilter()">Весь граф</button>
+            </p>
+            <br>
+        </div>
+
+        <a href="javascript:void(0);" onclick="setVisible('Uz')">Узел</a>
+        <div id="Uz" style="display: none;">Узел</div>
+
+        <a href="javascript:void(0);" onclick="setVisible('Rbr')">Ребро</a>
+        <div id="Rbr" style="display: none;">Ребро</div>
+    </div>
+
+    <div class="sidebar" id="rightSidebar">
+        <p id="selectNewNode"></p>
+        <p id="info">Легенда пуста</p>
     </div>
 
 
+    <canvas id="myCanvas"></canvas>
+
+    <div id="preloader">
+        <div>
+            Подождите идет загрузка...
+        </div>
+    </div>
+
+    <script type="text/javascript" src="Figures.js"></script>
+    <script type="text/javascript" src="Code.js"></script>
 </body>
 </html>

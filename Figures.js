@@ -201,10 +201,10 @@ class Pentagon extends NodeFigure{
     draw(){
         context.beginPath();
         context.moveTo(this.center.x, this.position.y);
-        context.lineTo(this.position.x + this.size, this.center.y);
-        context.lineTo(this.position.x + this.size, this.position.y + this.size);
-        context.lineTo(this.position.x, this.position.y + this.size);
-        context.lineTo(this.position.x, this.center.y);
+        context.lineTo(this.position.x + this.size, this.position.y + 1 * this.size / 3);
+        context.lineTo(this.position.x + 5 * this.size / 6, this.position.y + this.size);
+        context.lineTo(this.position.x + 1 * this.size / 6, this.position.y + this.size);
+        context.lineTo(this.position.x, this.position.y + 1 * this.size / 3);
         context.closePath();
         context.fillStyle = this.color;
         context.fill();
@@ -217,8 +217,9 @@ class Pentagon extends NodeFigure{
     }
 
     isSelect(mousePosition){
-        return (inTriangle(this.center.x, this.position.y, this.position.x + this.size, this.center.y, this.position.x, this.center.y, mousePosition)
-            || inRectangle(this.position.x, this.center.y, this.position.x + this.size, this.position.y + this.size, mousePosition))
+        return (inTriangle(this.position.x, this.position.y + 1 * this.size / 3, this.center.x, this.position.y, this.position.x + this.size, this.position.y + 1 * this.size / 3, mousePosition))
+        || (inTriangle(this.position.x, this.position.y + 1 * this.size / 3, this.position.x + 1 * this.size / 6, this.position.y + this.size, this.position.x + this.size, this.position.y + 1 * this.size / 3, mousePosition))
+        || (inTriangle(this.position.x, this.position.y + 1 * this.size / 3, this.position.x + 5 * this.size / 6, this.position.y + this.size, this.position.x + this.size, this.position.y + 1 * this.size / 3, mousePosition))
     }
 }
 
@@ -289,36 +290,8 @@ class Plus extends NodeFigure{
     }
 }
 
-class Vee extends NodeFigure{
-    constructor (id, x, y, size, color, shape, label){
-        super(id, x, y, size, color, shape, label);
-    }
-
-    draw(){
-        context.beginPath();
-        context.moveTo(this.center.x, this.center.y);
-        context.lineTo(this.position.x + this.size, this.position.y);
-        context.lineTo(this.center.x, this.position.y + this.size);
-        context.lineTo(this.position.x, this.position.y);
-        context.closePath();
-        context.fillStyle = this.color;
-        context.fill();
-        super.draw();
-        super.addlabel();
-    }
-
-    drag(mousePosition){
-        super.drag(mousePosition);
-    }
-
-    isSelect(mousePosition){
-        return (inTriangle(this.position.x, this.position.y, this.center.x, this.center.y, this.center.x, this.position.y + this.size, mousePosition)
-            || inTriangle(this.position.x + this.size, this.position.y, this.center.x, this.center.y, this.center.x, this.position.y + this.size, mousePosition))
-    }
-}
-
 const shapeMapping = {
-    "Circle" : Circle, "Triangle" : Triangle, "Rectangle" : Rectangle, "Rhomb" : Rhomb, "Pentagon" : Pentagon, "Hexagon" : Hexagon, "Plus" : Plus, "Vee" : Vee
+    "Circle" : Circle, "Triangle" : Triangle, "Rectangle" : Rectangle, "Rhomb" : Rhomb, "Pentagon" : Pentagon, "Hexagon" : Hexagon, "Plus" : Plus
 }
 
 class Figures{
@@ -401,9 +374,13 @@ class Edge{
         this.label = (label == null) ? new EdgeLabel() : label;
         this.direction = (direction == null) ? 1 : direction;
         this.isSelected = false;
+        this.group = "Edge"
     }
 
-    dragCanvas(translatePos){}
+    dragCanvas(translatePos, scale){
+        this.width = this.width * scale;
+        //доделать для стрелочек * scale
+    }
 
     draw(){
         switch (this.shape){
@@ -453,7 +430,7 @@ class Edge{
         if (koef == 0){
             koef = 0.001
         }
-        console.log(koef)
+        //console.log(koef)
         koef = -1 / koef;
         var b = cY-koef*cX;
         var R = 100;
@@ -687,8 +664,5 @@ function inTriangle(x1, y1, x2, y2, x3, y3, mousePosition){
 }
 
 function inRectangle(xLT, yLT, xRB, yRB, mousePosition){
-    if ((xLT <= mousePosition.x && mousePosition.x <= xRB)
-    && (yLT <= mousePosition.y && mousePosition.y <= yRB))
-        return true;
-    return false;
+    return ((xLT <= mousePosition.x && mousePosition.x <= xRB) && (yLT <= mousePosition.y && mousePosition.y <= yRB))
 }

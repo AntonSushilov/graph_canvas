@@ -5,7 +5,6 @@ elements = new Figures();
 var previousSelectedFigure;
 var isDraggingFigure = false;
 var isDraggingCanvas = false;
-var scale = 1.0;
 var scaleFigure = 1.0;
 var translatePos = {x: 0, y: 0};
 var lastPosition = {x: canvas.width / 2, y: canvas.height / 2};
@@ -15,6 +14,7 @@ canvas.onmouseup = stopDragging;
 canvas.onmousemove = dragFigureAndCanvas;
 canvas.onwheel = changeScale;
 
+window.addEventListener('resize', resizeCanvas, false)
 
 //Рисование из json файла
 /*
@@ -92,7 +92,71 @@ function paintCircle(array, groupName, baseX, baseY){
     });
 }
 */
-createFigures(2, 1);
+resizeCanvas();
+createFigures(10, 5);
+let preload = document.getElementById('preloader')
+preload.style.display = 'none'
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    drawCanvas();
+}
+
+//Видимость блоков фильтр, легенда
+function setVis(tag) {
+    let el = document.getElementById(tag);
+    el.classList.toggle('switch')
+}
+
+//Скрыть/раскрыть блок настроек
+function setVisible(id) {
+    let el = document.getElementById(id);
+    el.style.display = (el.style.display == 'nnone') ? 'block' : 'none';
+}
+
+//Помещает граф по центру
+function setZoom(){
+    console.log("zooom")
+    let trPos; let scale;
+    do {
+        setGraphAtCenter(getMinMaxCoordinates())
+        trPos = translatePos;
+        drawCanvas();
+
+        setGraphAtNormalSize(getMinMaxCoordinates())
+        scale = scaleFigure
+        drawCanvas();
+    } while (trPos.x != 0 || trPos.y != 0 || scale != 1)
+}
+
+function getMinMaxCoordinates(){
+    let minX = elements.figures[0].position.x;
+    let minY = elements.figures[0].position.y;
+    let maxX = 0; let maxY = 0;
+    elements.figures.forEach(elem => {
+        if (elem.group.includes("Node")){
+            if (elem.position.x < minX) minX = elem.position.x;
+            if (elem.position.y < minY) minY = elem.position.y;
+            if((elem.position.x + elem.size) > maxX) maxX = elem.position.x + elem.size;
+            if((elem.position.y + elem.size) > maxY) maxY = elem.position.y + elem.size;
+        }
+    });
+    return {minX, minY, maxX, maxY}
+}
+
+function setGraphAtCenter(coords){
+    let centerCanvas = {x: canvas.width / 2, y: canvas.height / 2};
+    let centerGraph = {x: (coords.maxX + coords.minX) / 2, y: (coords.maxY + coords.minY) / 2};
+    translatePos = {x: centerCanvas.x - centerGraph.x, y: centerCanvas.y - centerGraph.y}
+}
+
+function setGraphAtNormalSize(coords){
+    let scaleX = canvas.width / (coords.maxX - coords.minX);
+    let scaleY = canvas.height / (coords.maxY - coords.minY);
+    scaleFigure = ((coords.maxX - coords.minX) > (coords.maxY - coords.minY)) ? scaleX : scaleY;
+}
+
 
 function randomFromTo(from, to){
     return Math.floor(Math.random() * (to - from + 1) + from);
@@ -161,7 +225,6 @@ function createFigures(nNodes, nEdges){
 }
 
 function canvasClick(e){ 
-    scale = 1;
     scaleFigure = 1;
     var selectFigure = elements.isSelectedFigure(getMousePos(e));
     if (previousSelectedFigure != null) previousSelectedFigure.isSelected = false;
@@ -183,11 +246,12 @@ function canvasClick(e){
     return;
 }
 
-function drawCanvas(mousePos){
+function drawCanvas(){
     context.clearRect(0, 0, canvas.width * 10, canvas.height * 10)
-    //context.scale(scale, scale);
     elements.figures.forEach(elem => elem.dragCanvas(translatePos, scaleFigure));
     elements.draw();
+    translatePos = {x:0, y:0};
+    scaleFigure = 1;
 }
 
 function stopDragging(){
@@ -214,17 +278,19 @@ function dragFigureAndCanvas(e){
 
 function changeScale(e){
     if (e.deltaY < 0){
-        scale = 1.1;
         scaleFigure = 1.2;
     }
-    else if (e.deltaY = 0){
-        scale = 1;
-        scaleFigure = 1;
-    }
     else {
-        scale = 0.9;
         scaleFigure = 0.8;
     }
+    drawCanvas();
+
+    var mousePos = getMousePos(e);
+    let coords = getMinMaxCoordinates();
+    let centerGraph = {x: (coords.maxX + coords.minX) / 2, y: (coords.maxY + coords.minY) / 2};
+
+    translatePos.x = mousePos.x - centerGraph.x;
+    translatePos.y = mousePos.y - centerGraph.y;
     drawCanvas();
 }
 
