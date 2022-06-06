@@ -30,10 +30,13 @@ class NodeFigure{
     }
 
     drag (mousePosition){
-        this.centerX = mousePosition.x;
-        this.centerY = mousePosition.y;
-        this.x = mousePosition.x - this.width / 2;
-        this.y = mousePosition.y -this.height / 2;
+        this.position = {x: mousePosition.x - this.radius, y: mousePosition.y - this.radius};
+        this.center = {x: mousePosition.x, y: mousePosition.y}
+    }
+
+    dragCanvas(translatePos){
+        this.position = {x: this.position.x + translatePos.x, y: this.position.y + translatePos.y};
+        this.center = {x: this.position.x + this.radius, y: this.position.y + this.radius}
     }
 
     addlabel(){
@@ -402,10 +405,11 @@ class Edge{
                 break;
             case "curve":
                 context.beginPath();
-                context.moveTo(this.from.centerX, this.from.centerY);
-                var controlX = (this.from.centerX + this.to.centerX - 100 * this.direction) / 2;
-                var controlY = (this.from.centerY + this.to.centerY - 100 * this.direction) / 2;
-                context.quadraticCurveTo(controlX, controlY, this.to.centerX, this.to.centerY);
+                context.moveTo(this.from.center.x, this.from.center.y);
+                var controlPoint = this.controlPoint(this.from.center.x, this.from.center.y, this.to.center.x, this.to.center.y, this.direction)
+                var controlX = controlPoint.x;
+                var controlY = controlPoint.y;
+                context.quadraticCurveTo(controlX, controlY, this.to.center.x, this.to.center.y);
                 context.lineWidth = this.width;
                 context.strokeStyle = this.color;
                 context.stroke();
@@ -418,6 +422,207 @@ class Edge{
                 context.arc(this.from.x, this.from.y, radius, 0, 2 * Math.PI);
                 context.strokeStyle = this.color;
                 context.stroke();
+                //super.draw();
+                this.addlabel(radius);
+                //this.addarrow();
+        }
+    }
+
+    controlPoint(x1, y1, x3, y3, direction){
+        var x2 = 0; var y2 = 0;
+        var cX = (x3+x1) / 2;
+        var cY = (y3+y1) / 2;
+        var koef = (y3-y1)/(x3-x1);
+        if (koef == 0){
+            koef = 0.001
+        }
+        console.log(koef)
+        koef = -1 / koef;
+        var b = cY-koef*cX;
+        var R = 100;
+        var a = 1+koef**2
+        var d = 2*koef*b - 2*cX -2*koef*cY
+        var c = cX**2 + b**2 + cY**2 - 2*b*cY - R**2 
+        var D = d**2 - 4*a*c
+        x2 = (d*(-1) + direction * Math.sqrt(D)) / (2*a)
+        y2 = koef*x2 + b
+        
+        return {x: x2, y: y2}
+    }
+
+    addlabel(radius){
+        context.font = this.label.font;
+        context.fillStyle = this.label.color;
+        this.label.lenght = context.measureText(this.label.content).width;
+        var labelPosition = this.getLabelPosition(radius);
+        context.fillText(this.label.content, labelPosition.x, labelPosition.y);
+    }
+
+    getLabelPosition(radius){
+        var x = 0; var y = 0;        
+        switch (this.label.position){
+            case "TopCenterLable":
+                if (this.shape == "loop") {
+                    //console.log("TopCenter loop")
+                    
+                    x = this.from.center.x - radius * 2 - this.label.lenght;
+                    y = this.from.center.y - radius * 2  - (this.width + 5);
+                }else if (this.shape == "curve"){
+                    var controlPoint = this.controlPoint(this.from.center.x, this.from.center.y, this.to.center.x, this.to.center.y, this.direction);
+                    x = controlPoint.x - this.label.lenght / 2;
+                    y = controlPoint.y;
+                    console.log()
+                }
+                else{
+                    //console.log("TopCenter no loop")
+                    x = (this.from.center.x+this.to.center.x) / 2 - this.label.lenght / 2;
+                    y = (this.from.center.y+this.to.center.y) / 2 - (this.width + 10);
+                }       
+                break;
+            case "BottomCenterLable":
+                if (this.shape == "loop") {
+                    //console.log("TopCenter loop")
+                    x = this.from.center.x - radius*2 - this.label.lenght;
+                    y = this.from.center.y - radius*2  - (this.width + 5);
+                }else if (this.shape == "curve"){
+                    var controlPoint = this.controlPoint(this.from.center.x, this.from.center.y, this.to.center.x, this.to.center.y, this.direction);
+                    x = controlPoint.x  - this.label.lenght / 2;
+                    y = controlPoint.y;
+                }else{
+                    //console.log("TopCenter no loop")
+                    x = (this.from.center.x+this.to.center.x) / 2 - this.label.lenght / 2;
+                    y = (this.from.center.y+this.to.center.y) / 2 + this.width + 10;
+                }
+                break;                    
+        }
+        //console.log(this.label.position, x,y)
+        return {x, y}       
+    }
+
+    addarrow(){
+        context.fillStyle = this.arrow.color;
+        this.getArrowPosition();
+        context.lineWidth = 2;
+        context.strokeStyle = "black";
+        context.fillStyle = this.color;
+        
+        //context.stroke();
+        //context.fillText(this.label.content, labelPosition.x, labelPosition.y);
+        
+    }
+
+    getArrowPosition(){
+        var x1 = 0; var y1 = 0;
+        var x2 = 0; var y2 = 0;
+        var x3 = 0; var y3 = 0;
+        var x4 = 0; var y4 = 0;
+        var step1 = 0; var step2 = 0;
+        if (this.to.radius){
+            var step1 = this.to.radius;
+        }
+        else{
+            step1 = Math.sqrt(this.to.size**2 + this.to.size**2)
+        }
+        step2 = step1 + 30;
+
+        
+        switch (this.shape){
+            case "straight":
+                var dx = this.from.center.x - this.to.center.x;
+                var dy = this.from.center.y - this.to.center.y;
+                var r = Math.sqrt(dx ** 2 + dy ** 2);
+                
+                break;
+            case "curve":
+                //Доделать
+                var controlPoint = this.controlPoint(this.from.center.x, this.from.center.y, this.to.center.x, this.to.center.y, this.direction)
+                var dx = controlPoint.x - this.to.center.x;
+                var dy = controlPoint.y - this.to.center.y;
+                var r = Math.sqrt(dx ** 2 + dy ** 2);
+                break;
+        }
+
+
+        switch (this.arrow.arrow){
+            case "none":
+                
+                break;
+            case "triangle":
+                x1 = dx * (step1/r) + this.to.center.x;
+                y1 = dy * (step1/r) + this.to.center.y;
+                x2 = dx * (step2/r) + this.to.center.x;
+                y2 = dy * (step2/r) + this.to.center.y;
+                var alpha =  Math.PI/4;
+                x3 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
+                y3 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
+                alpha = -Math.PI/4;
+                x4 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
+                y4 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
+                context.beginPath();
+                context.moveTo(x1, y1);
+                context.lineTo(x3, y3);
+                context.lineTo(x4, y4);
+                context.closePath();
+                context.lineWidth = 2;
+                context.strokeStyle = "black";
+                context.fillStyle = this.color;
+                context.fill()
+                break;
+            case "rhomb":
+                var x5 = 0; var y5 = 0
+                x1 = dx * (step1/r) + this.to.center.x;
+                y1 = dy * (step1/r) + this.to.center.y;
+                step2 = step1 + 30;
+                x2 = dx * (step2/r) + this.to.center.x;
+                y2 = dy * (step2/r) + this.to.center.y;
+
+                step2 = step1 + 45;
+                x5 = dx * (step2/r) + this.to.center.x;
+                y5 = dy * (step2/r) + this.to.center.y;
+                var alpha =  Math.PI/6;
+                x3 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
+                y3 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
+                alpha = -Math.PI/6;
+                x4 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
+                y4 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
+                context.beginPath();
+                context.moveTo(x1, y1);
+                context.lineTo(x3, y3);
+                context.lineTo(x5, y5);
+                context.lineTo(x4, y4);
+                context.closePath();
+                context.lineWidth = 2;
+                context.strokeStyle = "black";
+                context.fillStyle = this.color;
+                context.fill()
+                break;
+            case "vee":
+                var x5 = 0; var y5 = 0
+                x1 = dx * (step1/r) + this.to.center.x;
+                y1 = dy * (step1/r) + this.to.center.y;
+                step2 = step1 + 35;
+                x2 = dx * (step2/r) + this.to.center.x;
+                y2 = dy * (step2/r) + this.to.center.y;
+                step2 = step1 + 15;
+                x5 = dx * (step2/r) + this.to.center.x;
+                y5 = dy * (step2/r) + this.to.center.y;
+                var alpha =  Math.PI/6;
+                x3 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
+                y3 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
+                alpha = -Math.PI/6;
+                x4 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
+                y4 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
+                context.beginPath();
+                context.moveTo(x1, y1);
+                context.lineTo(x3, y3);
+                context.lineTo(x5, y5);
+                context.lineTo(x4, y4);
+                context.closePath();
+                context.lineWidth = 2;
+                context.strokeStyle = "black";
+                context.fillStyle = this.color;
+                context.fill()
+                break;
         }
     }
 }
