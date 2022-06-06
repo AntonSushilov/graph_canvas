@@ -204,12 +204,12 @@ class Pentagon extends NodeFigure{
 
     draw(){
         context.beginPath();
-        context.moveTo(this.centerX, this.y);
-        context.lineTo(this.x + this.width, this.centerY);
-        context.lineTo(this.x + this.width, this.y + this.height);
-        context.lineTo(this.x, this.y + this.height);
-        context.lineTo(this.x, this.centerY);
-        context.lineTo(this.centerX, this.y);
+        context.moveTo(this.center.x, this.position.y);
+        context.lineTo(this.position.x + this.size, this.center.y);
+        context.lineTo(this.position.x + this.size, this.position.y + this.size);
+        context.lineTo(this.position.x, this.position.y + this.size);
+        context.lineTo(this.position.x, this.center.y);
+        context.closePath();
         context.fillStyle = this.color;
         context.fill();
         super.draw();
@@ -221,8 +221,8 @@ class Pentagon extends NodeFigure{
     }
 
     isSelect(mousePosition){
-        return (inTriangle(this.centerX, this.y, this.x + this.width, this.centerY, this.x, this.centerY, mousePosition)
-            || inRectangle(this.x, this.centerY, this.x + this.width, this.y + this.height, mousePosition))
+        return (inTriangle(this.center.x, this.position.y, this.position.x + this.size, this.center.y, this.position.x, this.center.y, mousePosition)
+            || inRectangle(this.position.x, this.center.y, this.position.x + this.size, this.position.y + this.size, mousePosition))
     }
 }
 
@@ -325,6 +325,34 @@ class Vee extends NodeFigure{
     }
 }
 
+class Vee extends NodeFigure{
+    constructor (id, x, y, size, color, shape, label){
+        super(id, x, y, size, color, shape, label);
+    }
+
+    draw(){
+        context.beginPath();
+        context.moveTo(this.center.x, this.center.y);
+        context.lineTo(this.position.x + this.size, this.position.y);
+        context.lineTo(this.center.x, this.position.y + this.size);
+        context.lineTo(this.position.x, this.position.y);
+        context.closePath();
+        context.fillStyle = this.color;
+        context.fill();
+        super.draw();
+        super.addlabel();
+    }
+
+    drag(mousePosition){
+        super.drag(mousePosition);
+    }
+
+    isSelect(mousePosition){
+        return (inTriangle(this.position.x, this.position.y, this.center.x, this.center.y, this.center.x, this.position.y + this.size, mousePosition)
+            || inTriangle(this.position.x + this.size, this.position.y, this.center.x, this.center.y, this.center.x, this.position.y + this.size, mousePosition))
+    }
+}
+
 const shapeMapping = {
     "Circle" : Circle, "Triangle" : Triangle, "Rectangle" : Rectangle, "Rhomb" : Rhomb, "Pentagon" : Pentagon, "Hexagon" : Hexagon, "Plus" : Plus, "Vee" : Vee
 }
@@ -392,6 +420,8 @@ class Edge{
         this.direction = (direction == null) ? 1 : direction;
         this.isSelected = false;
     }
+
+    dragCanvas(translatePos){}
 
     draw(){
         switch (this.shape){

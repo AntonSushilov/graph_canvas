@@ -5,15 +5,15 @@ elements = new Figures();
 var previousSelectedFigure;
 var isDraggingFigure = false;
 var isDraggingCanvas = false;
-var scale = 1.0
-var translatePos = {x: 0, y: 0}
+var scale = 1.0;
+var scaleFigure = 1.0;
+var translatePos = {x: 0, y: 0};
 var lastPosition = {x: canvas.width / 2, y: canvas.height / 2};
 
 canvas.onmousedown = canvasClick;
 canvas.onmouseup = stopDragging;
 canvas.onmousemove = dragFigure;
 
-createFigures(10, 5);
 
 //Рисование из json файла
 
@@ -95,14 +95,7 @@ function paintCircle(array, groupName, baseX, baseY){
     });
 }
 
-
-
-
-
-
-
-
-
+createFigures(2, 1);
 
 createFigures(20, 10);
 
@@ -168,6 +161,7 @@ function createFigures(nNodes, nEdges){
 
 function canvasClick(e){ 
     scale = 1;
+    scaleFigure = 1;
     var selectFigure = elements.isSelectedFigure(getMousePos(e));
     if (previousSelectedFigure != null) previousSelectedFigure.isSelected = false;
 
@@ -187,10 +181,9 @@ function canvasClick(e){
 
 function drawCanvas(mousePos){
     context.clearRect(0, 0, canvas.width * 10, canvas.height * 10)
-    context.scale(scale, scale);
-    elements.figures.forEach(elem => elem.dragCanvas(translatePos));
+    //context.scale(scale, scale);
+    elements.figures.forEach(elem => elem.dragCanvas(translatePos, scaleFigure));
     elements.draw();
-    console.log(  elements.figures)
 }
 
 function stopDragging(){
@@ -205,9 +198,18 @@ function dragFigure(e){
 }
 
 function changeScale(e){
-    if (e.deltaY < 0) scale = 1.1;
-    else if (e.deltaY = 0) scale = 1;
-    else scale = 0.9;
+    if (e.deltaY < 0){
+        scale = 1.1;
+        scaleFigure = 1.2;
+    }
+    else if (e.deltaY = 0){
+        scale = 1;
+        scaleFigure = 1;
+    }
+    else {
+        scale = 0.9;
+        scaleFigure = 0.8;
+    }
     drawCanvas();
 }
 
