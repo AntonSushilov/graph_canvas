@@ -35,10 +35,8 @@ class NodeFigure{
         this.center = {x: mousePosition.x, y: mousePosition.y}
     }
 
-    dragCanvas(translatePos, scale){
-        this.radius = this.radius * scale;
-        this.size = this.size * scale;
-        this.position = {x: (this.position.x + translatePos.x) * scale, y: (this.position.y + translatePos.y) * scale};
+    dragCanvas(translatePos){
+        this.position = {x: this.position.x + translatePos.x, y: this.position.y + translatePos.y};
         this.center = {x: this.position.x + this.radius, y: this.position.y + this.radius}
     }
 
@@ -419,14 +417,11 @@ class Edge{
                 break;
             case "curve":
                 context.beginPath();
-                var x1 = this.from.center.x; var y1 = this.from.center.y;
-                var x2 = 0; var y2 = 0;
-                var x3 = this.to.center.x; var y3 = this.to.center.y;     
-                context.moveTo(x1, y1);
-                var controlPoint = this.controlPoint(x1, y1, x3, y3, this.direction)
-                x2 = controlPoint.x;
-                y2 = controlPoint.y;
-                context.quadraticCurveTo(x2, y2, x3, y3);
+                context.moveTo(this.from.center.x, this.from.center.y);
+                var controlPoint = this.controlPoint(this.from.center.x, this.from.center.y, this.to.center.x, this.to.center.y, this.direction)
+                var controlX = controlPoint.x;
+                var controlY = controlPoint.y;
+                context.quadraticCurveTo(controlX, controlY, this.to.center.x, this.to.center.y);
                 context.lineWidth = this.width;
                 context.strokeStyle = this.color;
                 context.stroke();
@@ -481,6 +476,7 @@ class Edge{
             case "TopCenterLable":
                 if (this.shape == "loop") {
                     //console.log("TopCenter loop")
+                    
                     x = this.from.center.x - radius * 2 - this.label.lenght;
                     y = this.from.center.y - radius * 2  - (this.width + 5);
                 }else if (this.shape == "curve"){
@@ -521,22 +517,12 @@ class Edge{
         context.lineWidth = 2;
         context.strokeStyle = "black";
         context.fillStyle = this.color;
+        
         //context.stroke();
         //context.fillText(this.label.content, labelPosition.x, labelPosition.y);
         
     }
 
-
-    pointOnCurve(p1, p2, p3, t){
-        var p = (1-t)**2*p1+2*(1-t)*t*p2+t**2*p3;
-        return p;
-    }
-
-    straightLength(x1, y1, x2, y2){
-        var l = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
-        return l;
-    }
-    
     getArrowPosition(){
         var x1 = 0; var y1 = 0;
         var x2 = 0; var y2 = 0;
@@ -561,40 +547,13 @@ class Edge{
                 break;
             case "curve":
                 //Доделать
-                var controlPoint = this.controlPoint(this.from.center.x, this.from.center.y, this.to.center.x, this.to.center.y, this.direction);
-                var l = this.straightLength(this.from.center.x, this.from.center.y, this.to.center.x, this.to.center.y);
-                console.log(l)
-                var t = 0;
-                if (l>500){
-                    t = 0.95;
-                }else if(l<=500 && l>=460){
-                        t = 0.9 - (1 - l / 500)     
-                            
-                }else if(l< 460 && l>=250){
-                    t = 0.82
-                }else{
-                    t = 0.8
-                    console.log(t)
-                }
-                
-                
- 
-                var cpx = this.pointOnCurve(this.from.center.x, controlPoint.x, this.to.center.x, t); 
-                var cpy = this.pointOnCurve(this.from.center.y, controlPoint.y, this.to.center.y, t);
-
-                context.beginPath();
-                context.arc(cpx, cpy, 10, 0, 2*Math.PI);
-                context.fillStyle = this.color;
-                context.fill();
-                var dx = cpx - this.to.center.x;
-                var dy = cpy - this.to.center.y;
-
-                //var dx = controlPoint.x - this.to.center.x;
-                //var dy = controlPoint.y - this.to.center.y;
+                var controlPoint = this.controlPoint(this.from.center.x, this.from.center.y, this.to.center.x, this.to.center.y, this.direction)
+                var dx = controlPoint.x - this.to.center.x;
+                var dy = controlPoint.y - this.to.center.y;
                 var r = Math.sqrt(dx ** 2 + dy ** 2);
                 break;
         }
-        console.log(this.arrow.arrow)
+
 
         switch (this.arrow.arrow){
             case "none":
@@ -621,25 +580,33 @@ class Edge{
                 context.fillStyle = this.color;
                 context.fill()
                 break;
-            case "angle":
+            case "rhomb":
+                var x5 = 0; var y5 = 0
                 x1 = dx * (step1/r) + this.to.center.x;
                 y1 = dy * (step1/r) + this.to.center.y;
+                step2 = step1 + 30;
                 x2 = dx * (step2/r) + this.to.center.x;
                 y2 = dy * (step2/r) + this.to.center.y;
-                var alpha =  Math.PI/4;
+
+                step2 = step1 + 45;
+                x5 = dx * (step2/r) + this.to.center.x;
+                y5 = dy * (step2/r) + this.to.center.y;
+                var alpha =  Math.PI/6;
                 x3 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
                 y3 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
-                alpha = -Math.PI/4;
+                alpha = -Math.PI/6;
                 x4 = -Math.sin(alpha)*(y2-y1)+Math.cos(alpha)*(x2-x1)+x1;
                 y4 = Math.cos(alpha)*(y2-y1)+Math.sin(alpha)*(x2-x1)+y1;
                 context.beginPath();
                 context.moveTo(x1, y1);
                 context.lineTo(x3, y3);
-                context.moveTo(x1, y1);
+                context.lineTo(x5, y5);
                 context.lineTo(x4, y4);
+                context.closePath();
                 context.lineWidth = 2;
-                context.strokeStyle = this.color;
-                context.stroke();
+                context.strokeStyle = "black";
+                context.fillStyle = this.color;
+                context.fill()
                 break;
             case "vee":
                 var x5 = 0; var y5 = 0

@@ -1,4 +1,5 @@
 {
+    "layout": { "name": "Circle", "count": 2, "nameGroups": ["Node1", "Node2", "Edge"], "centerGroups": [{"x": 220, "y": 220}, {"x": 700, "y": 500}]},
     "figures": [
         {"id": "id0", "shape": "Triangle", "color": "green", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
         {"id": "id1", "shape": "Circle", "color": "blue", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
@@ -20,9 +21,5 @@
         {"id": "id17", "shape": "Vee", "color": "purple", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
         {"id": "id18", "shape": "Pentagon", "color": "orange", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
         {"id": "id19", "shape": "Plus", "color": "pink", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}}
-    ],
-    "edges": [
-        {"id": "idEdge0", "from": "id0", "to": "id1", "arrow":"triangle", "color":"green", "":""},
-        {}
-    ]
+    ] 
 }

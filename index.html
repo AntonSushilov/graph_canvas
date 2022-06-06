@@ -1,51 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Canvas</title>
-    <link rel="stylesheet" href="css/style.css">
+    <style>
+        canvas{
+            border: #333 10px solid;
+        }
+        body{
+            padding: 50px;
+        }
+    </style>
+    <script type="text/javascript" src="Figures.js"></script>
 </head>
 <body>
-    <ul class="navMy myLeft">
-        <li><a href="#" onclick="setVis('leftSidebar')">Фильтр</a></li>
-        <li><a href="#" onclick="sуtZoom()">Центр</a></li>
-    </ul>
-    <ul class="navMy myRight">
-        <li><a href="#" onclick="setVis('rightSidebar')">Легенда</a></li>
-    </ul>
+    <canvas id='myCanvas' width="1000px" height="700px"></canvas>
 
-    <div class="sidebar" id="leftSidebar">
-        <p>
-            <div>Тип диаграммы: <br/></div>
-            <input class="typeDiagr" type="radio" name="typeDiagr" value="random" checked>Случайно <br>
-            <input class="typeDiagr" type="radio" name="typeDiagr" value="circle1">Одна окружность <br>
-            <input class="typeDiagr" type="radio" name="typeDiagr" value="circle2">Две окружности <br>
-            <input class="typeDiagr" type="radio" name="typeDiagr" value="frReing">Fruchterman-Reingold <br>
-            <input class="typeDiagr" type="radio" name="typeDiagr" value="openOrd">OpenOrd <br>
+    <script type="text/javascript"  src="Code.js"></script>
 
-
-        </p>
-
-        <a href="javascript:void(0);" onclick="setVisible('Dop_Usl')">Дополнительные условия</a>
-        <div id="Dop_usl" style="display: block;">
-            <p>
-                Отобразить топ по сумме связей: <br> ('-1' - все узлы графа) <br>
-                <input type="number" name="topSum" min="0" value="20" style="width: 175px;">
-                <button type="button" style="font-size: 14px;" onclick="getTop()">Применить</button>
-                _____________________
-            </p>
-            <p>
-                Количество связей: <br>
-                <input type="radio" name="colConnect" value="more" checked> Больше
-                <input type="number" name="numColMore" size="3" min="0" value="0">
-                <br>
-                <input type="radio" name="colConnect" value="more" checked> Больше
-                <input type="number" name="numColMore" size="3" min="0" value="0">
-            </p>
-
-        </div>
-    </div>
 
 
 </body>
