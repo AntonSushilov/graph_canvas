@@ -5,22 +5,19 @@ elements = new Figures();
 var previousSelectedFigure;
 var isDraggingFigure = false;
 var isDraggingCanvas = false;
-var scale = 1.0;
 var scaleFigure = 1.0;
 var translatePos = {x: 0, y: 0};
 var lastPosition = {x: canvas.width / 2, y: canvas.height / 2};
 
 canvas.onmousedown = canvasClick;
 canvas.onmouseup = stopDragging;
-canvas.onmousemove = dragFigure;
+canvas.onmousemove = dragFigureAndCanvas;
+canvas.onwheel = changeScale;
 
+window.addEventListener('resize', resizeCanvas, false)
 
 //Рисование из json файла
-
-
-
-
-
+/*
 testElems = '{ \
     "layout": { "name": "Circle", "count": 2, "nameGroups": ["Node1", "Node2", "Edge"], "centerGroups": [{"x": 220, "y": 220}, {"x": 700, "y": 500}]}, \
     "figures": [ \
@@ -94,44 +91,109 @@ function paintCircle(array, groupName, baseX, baseY){
         counter++;
     });
 }
+*/
+resizeCanvas();
+createFigures(10, 5);
+let preload = document.getElementById('preloader')
+preload.style.display = 'none'
 
-createFigures(2, 1);
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    drawCanvas();
+}
 
-createFigures(20, 10);
+//Видимость блоков фильтр, легенда
+function setVis(tag) {
+    let el = document.getElementById(tag);
+    el.classList.toggle('switch')
+}
+
+//Скрыть/раскрыть блок настроек
+function setVisible(id) {
+    let el = document.getElementById(id);
+    el.style.display = (el.style.display == 'none') ? 'block' : 'none';
+}
+
+//Помещает граф по центру
+function setZoom(){
+    console.log("zooom")
+    let trPos; let scale;
+    do {
+        setGraphAtCenter(getMinMaxCoordinates())
+        trPos = translatePos;
+        drawCanvas();
+
+        setGraphAtNormalSize(getMinMaxCoordinates())
+        scale = scaleFigure
+        drawCanvas();
+    } while (trPos.x != 0 || trPos.y != 0 || scale != 1)
+}
+
+function getMinMaxCoordinates(){
+    let minX = elements.figures[0].position.x;
+    let minY = elements.figures[0].position.y;
+    let maxX = 0; let maxY = 0;
+    elements.figures.forEach(elem => {
+        if (elem.group.includes("Node")){
+            if (elem.position.x < minX) minX = elem.position.x;
+            if (elem.position.y < minY) minY = elem.position.y;
+            if((elem.position.x + elem.size) > maxX) maxX = elem.position.x + elem.size;
+            if((elem.position.y + elem.size) > maxY) maxY = elem.position.y + elem.size;
+        }
+    });
+    return {minX, minY, maxX, maxY}
+}
+
+function setGraphAtCenter(coords){
+    let centerCanvas = {x: canvas.width / 2, y: canvas.height / 2};
+    let centerGraph = {x: (coords.maxX + coords.minX) / 2, y: (coords.maxY + coords.minY) / 2};
+    translatePos = {x: centerCanvas.x - centerGraph.x, y: centerCanvas.y - centerGraph.y}
+}
+
+function setGraphAtNormalSize(coords){
+    let scaleX = canvas.width / (coords.maxX - coords.minX);
+    let scaleY = canvas.height / (coords.maxY - coords.minY);
+    scaleFigure = ((coords.maxX - coords.minX) > (coords.maxY - coords.minY)) ? scaleX : scaleY;
+}
+
 
 function randomFromTo(from, to){
     return Math.floor(Math.random() * (to - from + 1) + from);
 }
 
-function addRandomNodes (){
+function addRandomNodes(){
     //example: id, x, y, width, height, color, shape, label
     var colors = ["green", "blue", "red", "yellow", "magenta", "orange", "brown", "purple", "pink", "cyan"];
-    var shapes = ["Circle", "Triangle", "Rectangle", "Rhomb", "Pentagon", "Hexagon", "Plus", "Vee"];
+    var shapes = ["Circle", "Triangle", "Rectangle", "Rhomb", "Pentagon", "Hexagon", "Plus"];
     var positions = ["TopLeft", "TopCenter", "TopRight", "CenterLeft", "CenterRight", "BottomLeft", "BottomCenter", "BottomRight"];
     var fontFamilies = ["Times", "Times New Roman", "Georgia", "Verdana", "Arial", "cursive", "fantasy"];
     var pos = positions[randomFromTo(0, 7)];
+    var content = pos
+    var color = colors[randomFromTo(0, 9)]
+    var font = randomFromTo(10, 20).toString() + 'px ' + fontFamilies[randomFromTo(0, 6)]
     return {
         id: 'id',
         x: randomFromTo(0, canvas.width),
         y: randomFromTo(0, canvas.height),
         size: randomFromTo(20, 100),
         color: color,
-        shape: shapes[randomFromTo(0, 7)],
+        shape: shapes[randomFromTo(0, 6)],
         //example: content, position, color, font
-        label: new NodeLabel(pos, pos, colors[randomFromTo(0, 9)], randomFromTo(10, 20).toString() + 'px ' + fontFamilies[randomFromTo(0, 6)]),
+        label: new NodeLabel(content, pos, color, font),
     }
 }
 
-function addRandomEdges (nNodes){
+function addRandomEdges(nNodes){
     var colors = ["green", "blue", "red", "yellow", "magenta", "orange", "brown", "purple", "pink", "cyan"];
     var shapes = ["straight", "curve", "loop"];
-    var arrows = ["none", "triangle", "rhomb", "vee"];
+    var arrows = ["none", "angle", "triangle", "vee"];
     var positions = ["TopCenterLable", "BottomCenterLable"];
     var fontFamilies = ["Times", "Times New Roman", "Georgia", "Verdana", "Arial", "cursive", "fantasy"];
     var pos = positions[randomFromTo(0, 1)];
     var content = pos;
-    var arrow = arrows[randomFromTo(0, 3)];
-    var shape = shapes[randomFromTo(1, 1)];
+    var arrow = arrows[randomFromTo(0,3)];
+    var shape = shapes[randomFromTo(0, 1)];
     var color = colors[randomFromTo(0, 9)];
     var font = randomFromTo(10, 20).toString() + 'px ' + fontFamilies[randomFromTo(0, 6)];
     return{
@@ -139,28 +201,30 @@ function addRandomEdges (nNodes){
         from: 'id' + randomFromTo(0, nNodes-1).toString(),
         to:  'id' + randomFromTo(0, nNodes-1).toString(),
         width: randomFromTo(3, 10),
-        color: colors[randomFromTo(0, 9)],
-        shape: shapes[randomFromTo(0, 1)],
-        arrow: arrows[randomFromTo(0, 4)],
+        color: color,
+        shape: shape,
+        arrow: new EdgeArrow(arrow, color),
         //example: content, position, color, font
-        label: null,
+        label: new EdgeLabel(content, pos, color, font),
     }
 }
 
 function createFigures(nNodes, nEdges){
     for (var i = 0; i < nNodes; i++){
         var figure = addRandomNodes();
-        elements.newNode(figure.shape, figure.id + i.toString(), figure.x, figure.y, figure.width, figure.height, figure.color, figure.label);
+        //
+        elements.newNode(figure.shape, figure.id + i.toString(), figure.x, figure.y, figure.size, figure.color, figure.label);
     }
     for (var i = 0; i < nEdges; i++){
         var figure = addRandomEdges(nNodes);
+        //
         elements.newEdge(figure.id + i.toString(), figure.from, figure.to, figure.width, figure.color, figure.shape, figure.arrow, figure.label);
     }
+    console.log(elements)
     drawCanvas();
 }
 
 function canvasClick(e){ 
-    scale = 1;
     scaleFigure = 1;
     var selectFigure = elements.isSelectedFigure(getMousePos(e));
     if (previousSelectedFigure != null) previousSelectedFigure.isSelected = false;
@@ -168,54 +232,71 @@ function canvasClick(e){
     if (selectFigure.isSelectFigure){
         previousSelectedFigure = selectFigure.figure;
         previousSelectedFigure.isSelected = true;
-        isDragging = true;
-    }
-    else{
+        isDraggingFigure = true;
+        isDraggingCanvas = false;
+    } 
+    else {
         previousSelectedFigure = null;
-        isDragging = false;
+        isDraggingFigure = false;
+        isDraggingCanvas = true;
+        lastPosition = getMousePos(e);
     }
 
     drawCanvas();
     return;
 }
 
-function drawCanvas(mousePos){
+function drawCanvas(){
     context.clearRect(0, 0, canvas.width * 10, canvas.height * 10)
-    //context.scale(scale, scale);
     elements.figures.forEach(elem => elem.dragCanvas(translatePos, scaleFigure));
     elements.draw();
+    translatePos = {x:0, y:0};
+    scaleFigure = 1;
 }
 
 function stopDragging(){
-    isDragging = false;
+    isDraggingFigure = false;
+    isDraggingCanvas = false;
+    translatePos = {x: 0, y: 0};
 }
 
-function dragFigure(e){
-    if (isDragging && previousSelectedFigure != null){
+function dragFigureAndCanvas(e){
+    e.preventDefault();
+    if (isDraggingFigure && previousSelectedFigure != null){
         previousSelectedFigure.drag(getMousePos(e));
         drawCanvas();
+    } else {
+        if (isDraggingCanvas){
+            var mousePos = getMousePos(e);
+            translatePos.x = mousePos.x - lastPosition.x;
+            translatePos.y = mousePos.y - lastPosition.y;
+            lastPosition = mousePos;
+            drawCanvas();
+        }
     }
 }
 
 function changeScale(e){
     if (e.deltaY < 0){
-        scale = 1.1;
         scaleFigure = 1.2;
     }
-    else if (e.deltaY = 0){
-        scale = 1;
-        scaleFigure = 1;
-    }
     else {
-        scale = 0.9;
         scaleFigure = 0.8;
     }
+    drawCanvas();
+
+    var mousePos = getMousePos(e);
+    let coords = getMinMaxCoordinates();
+    let centerGraph = {x: (coords.maxX + coords.minX) / 2, y: (coords.maxY + coords.minY) / 2};
+
+    translatePos.x = mousePos.x - centerGraph.x;
+    translatePos.y = mousePos.y - centerGraph.y;
     drawCanvas();
 }
 
 function getMousePos(e){
     return {
-        x: e.pageX - canvas.offsetLeft,
-        y: e.pageY - canvas.offsetTop
+        x: e.clientX - canvas.offsetLeft,
+        y: e.clientY - canvas.offsetTop
     };
 }

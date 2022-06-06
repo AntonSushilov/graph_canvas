@@ -1,0 +1,125 @@
+html{
+    overflow: hidden;
+}
+
+A, A:active, A:link, A:visited {
+    color: green;
+}
+
+p {
+    color: black;
+}
+
+/* Анимация на время загрузки*/
+
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, .6);
+    z-index: 88;
+}
+
+#preloader div{
+    background: #fff;
+    width: 260px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 8px;
+    font-family: Arial;
+    font-size: 15px;
+    color: #111;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .4);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99;
+    margin: auto;
+}
+
+/*Блоки страницы*/
+.sidebar {
+    background-color: #ddd;
+    position: absolute;
+    padding-left: 5px;
+    border: 1px solid black;
+    font-size: 15px;
+    z-index: 10;
+    overflow: auto;
+}
+
+#leftSidebar {
+    left: -400px;
+    top: 100px;
+    width: 300px;
+    height: 75%;
+    transition: left 1s linear;
+}
+#leftSidebar.switch {
+    left: 15px;
+}
+
+#rightSidebar {
+    right: -400px;
+    top: 100px;
+    width: 300px;
+    height: 75%;
+    transition: right 1s linear;
+}
+#rightSidebar.switch {
+    right: 15px;
+}
+
+#myCanvas {
+    background-color: white;
+    z-index: 5;
+}
+
+.line {
+    border-bottom: 1px dashed green;
+}
+
+/*Кнопки в верхней части страницы*/
+
+.navMy {
+    position: absolute;
+    top: 20px;
+    z-index: 20;
+}
+.navMy.myRight {
+    right: 15px;
+}
+.navMy.myLeft {
+    left: 15px;
+}
+
+ul.navMy {
+    margin-left: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.navMy li {
+    display: inline;
+}
+
+ul.navMy a {
+    display: inline-block;
+    width: 7em;
+    padding: 3px;
+    background-color: #f4f4f4;
+    border: 1px dashed #333;
+    text-decoration: none;
+    color: #333;
+    text-align: center;
+}
+
+ul.navMy a:hover {
+    background-color: #333;
+    color: #f4f4f4;
+}
