@@ -36,13 +36,17 @@ class NodeFigure{
     }
 
     dragCanvas(translatePos, scale){
+        scale = window.scaleFigure;
         this.radius = this.radius * scale;
         this.size = this.size * scale;
         this.position = {x: (this.position.x + translatePos.x) * scale, y: (this.position.y + translatePos.y) * scale};
-        this.center = {x: this.position.x + this.radius, y: this.position.y + this.radius}
+        this.center = {x: this.position.x + this.radius, y: this.position.y + this.radius};
+
+        var labelFont = this.label.font.split('px');
+        this.label.font = (labelFont[0] * scale).toString() + 'px ' + labelFont[1];
     }
 
-    addlabel(){
+    addLabel(){
         context.font = this.label.font;
         context.fillStyle = this.label.color;
         this.label.lenght = context.measureText(this.label.content).width;
@@ -101,7 +105,7 @@ class Circle extends NodeFigure{
         context.fillStyle = this.color;
         context.fill();
         super.draw();
-        super.addlabel();
+        super.addLabel();
     }
 
     drag(mousePosition){
@@ -130,7 +134,7 @@ class Triangle extends NodeFigure{
         context.fillStyle = this.color;
         context.fill();
         super.draw();
-        super.addlabel();
+        super.addLabel();
     }
 
     drag(mousePosition){
@@ -153,7 +157,7 @@ class Rectangle extends NodeFigure{
         context.fillStyle = this.color;
         context.fill();
         super.draw();
-        super.addlabel();
+        super.addLabel();
     }
 
     drag(mousePosition){
@@ -180,7 +184,7 @@ class Rhomb extends NodeFigure{
         context.fillStyle = this.color;
         context.fill();
         super.draw();
-        super.addlabel();
+        super.addLabel();
     }
 
     drag(mousePosition){
@@ -209,7 +213,7 @@ class Pentagon extends NodeFigure{
         context.fillStyle = this.color;
         context.fill();
         super.draw();
-        super.addlabel();
+        super.addLabel();
     }
 
     drag(mousePosition){
@@ -240,7 +244,7 @@ class Hexagon extends NodeFigure{
         context.fillStyle = this.color;
         context.fill();
         super.draw();
-        super.addlabel();
+        super.addLabel();
     }
 
     drag(mousePosition){
@@ -277,7 +281,7 @@ class Plus extends NodeFigure{
         context.fillStyle = this.color;
         context.fill();
         super.draw();
-        super.addlabel();
+        super.addLabel();
     }
 
     drag(mousePosition){
@@ -300,7 +304,7 @@ class Figures{
     }
     newNode(shape, id, x, y, size, color, label){
         if (this.figures.find(f => f.id == id)) return;
-        var figure = new shapeMapping[shape](id, x, y, size, color, label);
+        var figure = new shapeMapping[shape](id, x, y, size, color, shape, label);
         this.figures.push(figure)
         return figure;
     }
@@ -377,13 +381,18 @@ class Edge{
         this.group = "Edge"
         this.arrowLength = 30;
         this.curveRadius = 100;
+        
     }
 
     dragCanvas(translatePos, scale){
+        scale = window.scaleFigure
         this.width = this.width * scale;
         //доделать для стрелочек * scale
         this.arrowLength = this.arrowLength * scale;
         this.curveRadius = this.curveRadius * scale;
+
+        var labelFont = this.label.font.split('px');
+        this.label.font = (labelFont[0] * scale).toString() + 'px ' + labelFont[1];
     }
 
     draw(){
@@ -395,7 +404,7 @@ class Edge{
                 context.lineWidth = this.width;
                 context.strokeStyle = this.color;
                 context.stroke();
-                this.addlabel();
+                this.addLabel();
                 this.addarrow();          
                 break;
             case "curve":
@@ -411,7 +420,7 @@ class Edge{
                 context.lineWidth = this.width;
                 context.strokeStyle = this.color;
                 context.stroke();
-                this.addlabel();
+                this.addLabel();
                 this.addarrow();
                 break;
             case "loop":
@@ -421,7 +430,7 @@ class Edge{
                 context.strokeStyle = this.color;
                 context.stroke();
                 //super.draw();
-                this.addlabel(radius);
+                this.addLabel(radius);
                 //this.addarrow();
         }
     }
@@ -448,7 +457,7 @@ class Edge{
         return {x: x2, y: y2}
     }
 
-    addlabel(radius){
+    addLabel(radius){
         context.font = this.label.font;
         context.fillStyle = this.label.color;
         this.label.lenght = context.measureText(this.label.content).width;

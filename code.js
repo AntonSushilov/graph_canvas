@@ -92,6 +92,7 @@ function paintCircle(array, groupName, baseX, baseY){
     });
 }
 */
+
 resizeCanvas();
 createFigures(10, 5);
 let preload = document.getElementById('preloader')
@@ -117,7 +118,6 @@ function setVisible(id) {
 
 //Помещает граф по центру
 function setZoom(){
-    console.log("zooom")
     let trPos; let scale;
     do {
         setGraphAtCenter(getMinMaxCoordinates())
@@ -157,7 +157,6 @@ function setGraphAtNormalSize(coords){
     scaleFigure = ((coords.maxX - coords.minX) > (coords.maxY - coords.minY)) ? scaleX : scaleY;
 }
 
-
 function randomFromTo(from, to){
     return Math.floor(Math.random() * (to - from + 1) + from);
 }
@@ -169,9 +168,10 @@ function addRandomNodes(){
     var positions = ["TopLeft", "TopCenter", "TopRight", "CenterLeft", "CenterRight", "BottomLeft", "BottomCenter", "BottomRight"];
     var fontFamilies = ["Times", "Times New Roman", "Georgia", "Verdana", "Arial", "cursive", "fantasy"];
     var pos = positions[randomFromTo(0, 7)];
-    var content = pos
-    var color = colors[randomFromTo(0, 9)]
-    var font = randomFromTo(10, 20).toString() + 'px ' + fontFamilies[randomFromTo(0, 6)]
+    var content = pos;
+    var color = colors[randomFromTo(0, 9)];
+    var font = randomFromTo(10, 20).toString() + 'px ' + fontFamilies[randomFromTo(0, 6)];
+    var label = new NodeLabel(content, pos, color, font);
     return {
         id: 'id',
         x: randomFromTo(0, canvas.width),
@@ -180,7 +180,7 @@ function addRandomNodes(){
         color: color,
         shape: shapes[randomFromTo(0, 6)],
         //example: content, position, color, font
-        label: new NodeLabel(content, pos, color, font),
+        label: label,
     }
 }
 
