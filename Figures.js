@@ -419,9 +419,13 @@ class Edge{
         this.label = (label == null) ? null : label;
         this.direction = (direction == null) ? 1 : direction;
         this.isSelected = false;
+        this.group = "Edge"
     }
 
-    dragCanvas(translatePos){}
+    dragCanvas(translatePos, scale){
+        this.width = this.width * scale;
+        //доделать для стрелочек * scale
+    }
 
     draw(){
         switch (this.shape){
@@ -565,9 +569,36 @@ class Edge{
                 break;
             case "curve":
                 //Доделать
-                var controlPoint = this.controlPoint(this.from.center.x, this.from.center.y, this.to.center.x, this.to.center.y, this.direction)
-                var dx = controlPoint.x - this.to.center.x;
-                var dy = controlPoint.y - this.to.center.y;
+                var controlPoint = this.controlPoint(this.from.center.x, this.from.center.y, this.to.center.x, this.to.center.y, this.direction);
+                var l = this.straightLength(this.from.center.x, this.from.center.y, this.to.center.x, this.to.center.y);
+                console.log(l)
+                var t = 0;
+                if (l>500){
+                    t = 0.95;
+                }else if(l<=500 && l>=460){
+                        t = 0.9 - (1 - l / 500)     
+                            
+                }else if(l< 460 && l>=250){
+                    t = 0.82
+                }else{
+                    t = 0.8
+                    console.log(t)
+                }
+                
+                
+ 
+                var cpx = this.pointOnCurve(this.from.center.x, controlPoint.x, this.to.center.x, t); 
+                var cpy = this.pointOnCurve(this.from.center.y, controlPoint.y, this.to.center.y, t);
+
+                context.beginPath();
+                context.arc(cpx, cpy, 10, 0, 2*Math.PI);
+                context.fillStyle = this.color;
+                context.fill();
+                var dx = cpx - this.to.center.x;
+                var dy = cpy - this.to.center.y;
+
+                //var dx = controlPoint.x - this.to.center.x;
+                //var dy = controlPoint.y - this.to.center.y;
                 var r = Math.sqrt(dx ** 2 + dy ** 2);
                 break;
         }
@@ -620,11 +651,9 @@ class Edge{
                 context.lineTo(x3, y3);
                 context.lineTo(x5, y5);
                 context.lineTo(x4, y4);
-                context.closePath();
                 context.lineWidth = 2;
-                context.strokeStyle = "black";
-                context.fillStyle = this.color;
-                context.fill()
+                context.strokeStyle = this.color;
+                context.stroke();
                 break;
             case "vee":
                 var x5 = 0; var y5 = 0
