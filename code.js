@@ -93,16 +93,8 @@ function paintCircle(array, groupName, baseX, baseY){
 }
 */
 
-resizeCanvas();
-createFigures(10, 5);
 let preload = document.getElementById('preloader')
 preload.style.display = 'none'
-
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    drawCanvas();
-}
 
 //Видимость блоков фильтр, легенда
 function setVis(tag) {
@@ -157,8 +149,16 @@ function setGraphAtNormalSize(coords){
     scaleFigure = ((coords.maxX - coords.minX) > (coords.maxY - coords.minY)) ? scaleX : scaleY;
 }
 
-function randomFromTo(from, to){
-    return Math.floor(Math.random() * (to - from + 1) + from);
+
+
+resizeCanvas();
+createFigures(10, 5);
+
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    drawCanvas();
 }
 
 function addRandomNodes(){
@@ -188,7 +188,7 @@ function addRandomEdges(nNodes){
     var colors = ["green", "blue", "red", "yellow", "magenta", "orange", "brown", "purple", "pink", "cyan"];
     var shapes = ["straight", "curve", "loop"];
     var arrows = ["none", "angle", "triangle", "vee"];
-    var positions = ["TopCenterLable", "BottomCenterLable"];
+    var positions = ["TopCenter", "BottomCenter"];
     var fontFamilies = ["Times", "Times New Roman", "Georgia", "Verdana", "Arial", "cursive", "fantasy"];
     var pos = positions[randomFromTo(0, 1)];
     var content = pos;
@@ -299,4 +299,8 @@ function getMousePos(e){
         x: e.clientX - canvas.offsetLeft,
         y: e.clientY - canvas.offsetTop
     };
+}
+
+function randomFromTo(from, to){
+    return Math.floor(Math.random() * (to - from + 1) + from);
 }

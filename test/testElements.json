@@ -1,4 +1,5 @@
 {
+    "styling_graph": { "name": "Название укладки"}, 
     "figures": [
         {"id": "id0", "shape": "Triangle", "color": "green", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
         {"id": "id1", "shape": "Circle", "color": "blue", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
@@ -7,7 +8,7 @@
         {"id": "id4", "shape": "Pentagon", "color": "orange", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
         {"id": "id5", "shape": "Hexagon", "color": "green", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
         {"id": "id6", "shape": "Plus", "color": "purple", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
-        {"id": "id7", "shape": "Vee", "color": "red", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
+        {"id": "id7", "shape": "Plus", "color": "red", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
         {"id": "id8", "shape": "Triangle", "color": "green", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
         {"id": "id9", "shape": "Triangle", "color": "blue", "group": "Node1", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
         {"id": "id10", "shape": "Triangle", "color": "orange", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
@@ -17,7 +18,7 @@
         {"id": "id14", "shape": "Pentagon", "color": "green", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
         {"id": "id15", "shape": "Hexagon", "color": "red", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
         {"id": "id16", "shape": "Plus", "color": "blue", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
-        {"id": "id17", "shape": "Vee", "color": "purple", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
+        {"id": "id17", "shape": "Plus", "color": "purple", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
         {"id": "id18", "shape": "Pentagon", "color": "orange", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}},
         {"id": "id19", "shape": "Plus", "color": "pink", "group": "Node2", "position:":{"x": 0, "y": 0}, "size":{"width":50, "height": 60}}
     ],

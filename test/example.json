@@ -1,0 +1,54 @@
+{
+    "layout": {
+        "name": "Название укладки",
+        "fontFamilies": "Times New Roman",
+        "fontSize": 10,
+        "positionLabelNode": "TopLeft",
+        "positionLabelEdge": "TopCenter",
+        "colorLabel": "Black"
+    },
+    "nodes": [
+        {
+            "id": "id0",
+            "position:": {
+                "x": 0,
+                "y": 0
+            },
+            "shape": "Triangle",
+            "color": "green",
+            "size": 50,
+            "label": "Bla bla bla"
+        },
+        {
+            "id": "id1",
+            "position:": {
+                "x": 0,
+                "y": 0
+            },
+            "shape": "Triangle",
+            "color": "green",
+            "size": 50,
+            "label": "Bla1 bla1 bla1"
+        }
+    ],
+    "edges": [
+        {
+            "id": "idEdge0",
+            "from": "id0",
+            "to": "id1",
+            "shapes": "curve",
+            "arrow": "triangle",
+            "color": "green",
+            "label": "Bla bla bla"
+        },
+        {
+            "id": "idEdge1",
+            "from": "id1",
+            "to": "id1",
+            "shapes": "loop",
+            "arrow": "none",
+            "color": "green",
+            "label": "Bla bla bla"
+        }
+    ]
+}
