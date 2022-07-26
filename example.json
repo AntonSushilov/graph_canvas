@@ -1,0 +1,71 @@
+var example = {
+    "layout": {
+        "name": "Random", //OPTION = {"Random", "Circle1", "Circle2"...}
+        "fontFamilies": "Times New Roman",
+        "fontSize": 10,
+        "positionLabelNode": "BottomCenter", //OPTION = {}
+        "positionLabelEdge": "TopCenterLable", //OPTION = {}
+        "colorLabelNode": "#FF55FF",
+        "colorLabelEdge": "#FF55FF"
+
+    },
+    "nodes": [
+        {
+            "id": "id0",
+            "position": {
+                "x": 500,
+                "y": 300
+            },
+            "shape": "Triangle", //OPTION = {}
+            "color": "#00FF00",
+            "size": 100,
+            "label": "Bla bla bla bla",
+            "group": "Node1", //OPTION = {"Node" or "Node1", "Node2"...}
+            "infoLegend": {
+                "name": "Anna",
+                "bday": "01.04.1983",
+            }
+        },
+        {
+            "id": "id1",
+            "position": {
+                "x": 800,
+                "y": 200
+            },
+            "shape": "Rectangle", //OPTION = {}
+            "color": "#FF0000",
+            "size": 50,
+            "label": "Bla1 bla1 bla1",
+            "group": "Node2", //OPTION = {"Node" or "Node1", "Node2"...}
+            "infoLegend": {
+                "name": "Petr",
+                "bday": "07.09z.1989",
+            }
+        }
+    ],
+    "edges": [
+        {
+            "id": "idEdge0",
+            "from": "id0",
+            "to": "id1",
+            "width": 4,
+            "shape": "curve", //OPTION = {}
+            "arrow": "vee", //OPTION = {}
+            "color": "#0000FF",
+            "label": "Bla1 bla1 bla1",
+            "group": "Edge1" //OPTION = {}
+        },
+        {
+            "id": "idEdge1",
+            "from": "id1",
+            "to": "id1",
+            "width": 7,
+            "shape": "loop", //OPTION = {}
+            "arrow": "none", //OPTION = {}
+            "color": "#FF0000",
+            "label": "Bla bla bla",
+            "group": "Edge2" //OPTION = {}
+        }
+    ]
+
+}

@@ -12,6 +12,8 @@ p {
 
 /* Анимация на время загрузки*/
 
+
+
 #preloader {
     position: fixed;
     top: 0;
@@ -42,6 +44,10 @@ p {
     margin: auto;
 }
 
+
+
+
+
 /*Блоки страницы*/
 .sidebar {
     background-color: #ddd;
@@ -71,6 +77,7 @@ p {
     height: 75%;
     transition: right 1s linear;
 }
+
 #rightSidebar.switch {
     right: 15px;
 }
@@ -83,6 +90,9 @@ p {
 .line {
     border-bottom: 1px dashed green;
 }
+
+
+
 
 /*Кнопки в верхней части страницы*/
 
@@ -122,4 +132,9 @@ ul.navMy a {
 ul.navMy a:hover {
     background-color: #333;
     color: #f4f4f4;
+}
+
+.button_style{
+    font-size: 14px;
+    height: 50px;
 }

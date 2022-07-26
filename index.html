@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width">
     <title>Canvas</title>
     <link rel="stylesheet" href="css/style.css">
+    <script src='example.json'></script>
 </head>
 <body>
     <ul class="navMy myLeft">
         <li><a href="#" onclick="setVis('leftSidebar')">Фильтр</a></li>
-        <li><a href="#" onclick="setZoom()">Центр</a></li>
+        <!-- <li><a href="#" onclick="setZoom()">Центр</a></li> -->
     </ul>
     <ul class="navMy myRight">
         <li><a href="#" onclick="setVis('rightSidebar')">Легенда</a></li>
@@ -23,61 +24,18 @@
             <input class="typeDiagr" type="radio" name="typeDiagr" value="circle2">Две окружности <br>
             <input class="typeDiagr" type="radio" name="typeDiagr" value="frReing">Fruchterman-Reingold <br>
             <input class="typeDiagr" type="radio" name="typeDiagr" value="openOrd">OpenOrd <br>
-
-
         </p>
 
-        <a href="javascript:void(0);" onclick="setVisible('Dop_Usl')">Дополнительные условия</a>
-        <div id="Dop_usl" style="display: block;">
-            <p>
-                Отобразить топ по сумме связей: <br> ('-1' - все узлы графа) <br>
-                <input type="number" name="topSum" min="0" value="20" style="width: 175px;">
-                <button type="button" style="font-size: 14px;" onclick="getTop()">Применить</button>
-                _____________________
-            </p>
-            <p>
-                Количество связей: <br>
-                <input type="radio" name="colConnect" value="more" checked> Больше
-                <input type="number" name="numColMore" size="3" min="0" value="0">
-                <br>
-                <input type="radio" name="colConnect" value="more" checked> Меньше
-                <input type="number" name="numColMore" size="3" min="0" value="0">
-            </p>
-            <p>
-                Сумма связей: <br>
-                <input type="radio" name="sumConnect" value="more" checked> Больше
-                <input type="number" name="numSumMore" size="3" min="-1" value="-1" maxlength="10">
-                <br>
-                <input type="radio" name="sumConnect" value="more" checked> Меньше
-                <input type="number" name="numSumMore" size="3" min="1" value="1">
-            </p>
+        <div id="NodesGroup"></div>
+        <div id="EdgesGroup"></div>
 
-        </div>
-    
-        <div>
-            <br>
-            <button type="button" id="btn_my" onclick="clickFilter()" style="font-size: 14px; height: 50px;">
-                Применить фильтры
-                <img src="" width="25" height="25" style="vertical-align: middle;" alt="пикча">
-            </button>
-            <p>
-                Построить: <br>
-                <button type="button" style="font-size: 14px;" onclick="clickNodes()">Граф узла</button>
-                <button type="button" style="font-size: 14px;" onclick="clickFilter()">Весь граф</button>
-            </p>
-            <br>
-        </div>
-
-        <a href="javascript:void(0);" onclick="setVisible('Uz')">Узел</a>
-        <div id="Uz" style="display: none;">Узел</div>
-
-        <a href="javascript:void(0);" onclick="setVisible('Rbr')">Ребро</a>
-        <div id="Rbr" style="display: none;">Ребро</div>
+        <button class="button_style" id="btn_my" type="button" onclick="changeStyleElements()">Применить стили
+        </button>
     </div>
 
     <div class="sidebar" id="rightSidebar">
         <p id="selectNewNode"></p>
-        <p id="info">Легенда пуста</p>
+        <p id="info">Легенда пока пуста, нажмите на любой узел или ребро, чтобы посмотреть информацию о них</p>
     </div>
 
 
